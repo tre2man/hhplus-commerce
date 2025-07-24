@@ -90,7 +90,6 @@ CREATE TABLE order_product (
     product_id BIGINT NOT NULL,
     product_price BIGINT NOT NULL COMMENT '상품 주문 당시 가격',
     quantity BIGINT NOT NULL COMMENT '구매 수량',
-    amount BIGINT NOT NULL COMMENT '총액 (가격 * 수량)',
     created_at DATETIME NOT NULL,
     FOREIGN KEY (order_id) REFERENCES order(id),
     FOREIGN KEY (product_id) REFERENCES product(id)
