@@ -1,10 +1,10 @@
-package kr.hhplus.be.server.product;
+package kr.hhplus.be.server.domain.product.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.hhplus.be.server.product.dto.GetPopularProductResponse;
-import kr.hhplus.be.server.product.dto.GetProductResponse;
+import kr.hhplus.be.server.infrastructure.product.dto.GetPopularProductResponse;
+import kr.hhplus.be.server.infrastructure.product.dto.GetProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

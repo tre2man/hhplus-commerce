@@ -1,10 +1,10 @@
-package kr.hhplus.be.server.product.dto;
+package kr.hhplus.be.server.domain.product.dto;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "인기 정보 조회")
-public class GetPopularProductResponse extends GetProductResponse{
+public class GetPopularProductResponse extends GetProductResponse {
     @Schema(description = "판매 횟수", example = "100")
     private Integer salesCount;
 

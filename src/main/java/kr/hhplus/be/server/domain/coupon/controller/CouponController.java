@@ -1,9 +1,9 @@
-package kr.hhplus.be.server.coupon;
+package kr.hhplus.be.server.domain.coupon.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.hhplus.be.server.coupon.dto.GetCouponResponse;
+import kr.hhplus.be.server.infrastructure.coupon.dto.GetCouponResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

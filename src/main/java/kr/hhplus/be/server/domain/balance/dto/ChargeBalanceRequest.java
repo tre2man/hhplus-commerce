@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.balance.dto;
+package kr.hhplus.be.server.domain.balance.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;

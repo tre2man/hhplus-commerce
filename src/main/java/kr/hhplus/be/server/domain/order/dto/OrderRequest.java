@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.order.dto;
+package kr.hhplus.be.server.domain.order.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
