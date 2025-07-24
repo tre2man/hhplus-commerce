@@ -29,20 +29,20 @@ CREATE TABLE product (
 
 CREATE TABLE balance (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
     amount BIGINT NOT NULL COMMENT '잔고',
     created_at DATETIME NOT NULL,
     updated_at DATETIME NOT NULL,
     deleted_at DATETIME
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
 CREATE TABLE balance_history (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL,
     balance_id BIGINT NOT NULL,
     amount_changed BIGINT NOT NULL,
     transaction_type VARCHAR(50) NOT NULL COMMENT 'CHARGE, USE',
     created_at DATETIME NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (balance_id) REFERENCES balance(id)
 );
 
@@ -62,7 +62,7 @@ CREATE TABLE issued_coupon (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     coupon_id BIGINT NOT NULL,
-    expire_at DATETIME NOT NULL,
+    expire_at DATETIME NOT NULL,[Coupon.java](..%2F..%2Fsrc%2Fmain%2Fjava%2Fkr%2Fhhplus%2Fbe%2Fserver%2Fdomain%2Fcoupon%2Fentity%2FCoupon.java)
     used_at DATETIME,
     created_at DATETIME NOT NULL,
     updated_at DATETIME NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE issued_coupon (
     FOREIGN KEY (coupon_id) REFERENCES coupon(id)
 );
 
-CREATE TABLE order_history (
+CREATE TABLE order (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     issued_coupon_id BIGINT,
@@ -84,15 +84,15 @@ CREATE TABLE order_history (
     FOREIGN KEY (issued_coupon_id) REFERENCES issued_coupon(id)
 );
 
-CREATE TABLE order_history_product (
+CREATE TABLE order_product (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    order_history_id BIGINT NOT NULL,
+    order_id BIGINT NOT NULL,
     product_id BIGINT NOT NULL,
     product_price BIGINT NOT NULL COMMENT '상품 주문 당시 가격',
     quantity BIGINT NOT NULL COMMENT '구매 수량',
     amount BIGINT NOT NULL COMMENT '총액 (가격 * 수량)',
     created_at DATETIME NOT NULL,
-    FOREIGN KEY (order_history_id) REFERENCES order_history(id),
+    FOREIGN KEY (order_id) REFERENCES order(id),
     FOREIGN KEY (product_id) REFERENCES product(id)
 );
 ```
