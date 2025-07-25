@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.domain.balance.dto.BalanceResponse;
 import kr.hhplus.be.server.domain.balance.dto.ChargeBalanceRequest;
+import kr.hhplus.be.server.domain.balance.service.BalanceFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/balance")
 @Tag(name = "Balance", description = "잔액 API")
 public class BalanceController {
+    private final BalanceFacade balanceFacade;
+
+    public BalanceController (BalanceFacade balanceFacade) {
+        this.balanceFacade = balanceFacade;
+    }
+
     @Operation(summary = "잔고 충전", description = "특정 사용자의 잔고를 충전할 수 있습니다.")
     @ApiResponse(responseCode = "201", description = "잔고 충전 성공")
     @PostMapping("{userId}/charge")
@@ -20,7 +27,7 @@ public class BalanceController {
             @PathVariable("userId") Long userId,
             @Valid @RequestBody ChargeBalanceRequest request
     ) {
-        // TODO: 잔고 충전 로직 구현
+        this.balanceFacade.chargeBalance(userId, request.getAmount());
         return ResponseEntity.status(201).build();
     }
 
@@ -30,7 +37,7 @@ public class BalanceController {
     public ResponseEntity<BalanceResponse> getBalance(
             @PathVariable("userId") Long userId
     ) {
-        // TODO: 잔고 조회 로직 구현
-        return ResponseEntity.ok(new BalanceResponse(1000L));
+        Integer amount = this.balanceFacade.getBalance(userId).getAmount();
+        return ResponseEntity.ok(BalanceResponse.of(amount));
     }
 }

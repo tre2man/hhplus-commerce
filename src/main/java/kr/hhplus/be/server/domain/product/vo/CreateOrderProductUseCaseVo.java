@@ -15,8 +15,4 @@ public class CreateOrderProductUseCaseVo {
     public static CreateOrderProductUseCaseVo of(Long productId, Integer quantity) {
         return new CreateOrderProductUseCaseVo(productId, quantity);
     }
-
-    public Long getTotalPrice() {
-        return productId * quantity;
-    }
 }
