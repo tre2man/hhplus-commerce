@@ -1,5 +1,11 @@
 package kr.hhplus.be.server.domain.order.service;
 
+import kr.hhplus.be.server.domain.balance.service.BalanceService;
+import kr.hhplus.be.server.domain.dataPlatform.service.DataPlatformService;
+import kr.hhplus.be.server.domain.order.entity.Order;
+import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.domain.product.vo.CreateOrderProductUseCaseVo;
+import kr.hhplus.be.server.domain.product.vo.CreateOrderUseCaseVo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,8 +13,12 @@ import org.mockito.Mock;
 
 import javax.naming.InsufficientResourcesException;
 
+import java.util.List;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 class OrderFacadeTest {
@@ -43,13 +53,13 @@ class OrderFacadeTest {
         Long userId = 1L;
 
         CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, productVo,
+        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of( userId, List.of(productVo));
 
-        when(productService.checkStock).thenReturn(true);
-        when(balanceService.hasSufficientBalance).thenReturn(true);
-        when(balanceService.useBalance).thenReturn(true);
-        when(orderService.save).thenReturn(true);
-        when(dataPlatformService.sendOrderData).thenReturn(true);
+        when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
+        when(balanceService.hasSufficientBalance(anyLong(), anyInt())).thenReturn(true);
+        when(balanceService.useBalance(anyLong(), anyInt())).thenReturn(any());
+        when(orderService.save(any())).thenReturn(any(Order.class));
+        doNothing().when(dataPlatformService).sendOrderData(any(Order.class));
 
         // When
         Order order = orderFacade.createOrder(createOrderUseCaseVo);
@@ -66,9 +76,9 @@ class OrderFacadeTest {
         Long issuedCouponId = 1L;
 
         CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, productVo, issuedCouponId);
+        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo));
 
-        when(productService.checkStock).thenReturn(false);
+        when(productService.checkStock(anyLong(), anyInt())).thenReturn(false);
 
         // When, Then
         assertThatThrownBy(() -> orderFacade.createOrder(createOrderUseCaseVo))
@@ -83,10 +93,10 @@ class OrderFacadeTest {
         Long issuedCouponId = 1L;
 
         CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, productVo);
+        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo));
 
-        when(productService.checkStock).thenReturn(true);
-        when(balanceService.hasSufficientBalance).thenReturn(false);
+        when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
+        when(balanceService.hasSufficientBalance(anyLong(), anyInt())).thenReturn(false);
 
         // When, Then
         assertThatThrownBy(() -> orderFacade.createOrder(createOrderUseCaseVo))
