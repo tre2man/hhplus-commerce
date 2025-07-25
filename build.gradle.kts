@@ -45,7 +45,12 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
+	testImplementation("org.projectlombok:lombok")
+
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testRuntimeOnly("org.projectlombok:lombok")
+
+	annotationProcessor("org.projectlombok:lombok")
 }
 
 tasks.withType<Test> {
