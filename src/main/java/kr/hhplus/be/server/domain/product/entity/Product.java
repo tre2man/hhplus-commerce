@@ -26,15 +26,14 @@ public class Product {
 
     protected Product() {}
 
-    private Product(Long id, String name, Integer stock, Integer price, String description) {
-        this.id = id;
+    private Product(String name, Integer stock, Integer price, String description) {
         this.name = name;
         this.stock = stock;
         this.price = price;
         this.description = description;
     }
 
-    public static Product create(Long id, String name, Integer stock, Integer price, String description) {
-        return new Product(id, name, stock, price, description);
+    public static Product create(String name, Integer stock, Integer price, String description) {
+        return new Product(name, stock, price, description);
     }
 }
