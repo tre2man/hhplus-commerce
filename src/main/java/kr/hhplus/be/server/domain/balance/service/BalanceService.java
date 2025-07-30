@@ -21,14 +21,14 @@ public class BalanceService {
     public Balance chargeBalance(Long userId, Integer chargeAmount) {
         Balance balance = this.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("잔고를 찾을 수 없습니다."));
-        balance.use(chargeAmount);
+        balance.charge(chargeAmount);
         return balanceRepository.save(balance);
     }
 
     public Balance useBalance(Long userId, Integer useAmount) {
         Balance balance = this.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("잔고를 찾을 수 없습니다."));
-        balance.charge(useAmount);
+        balance.use(useAmount);
         return balanceRepository.save(balance);
     }
 

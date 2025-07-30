@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "order")
@@ -43,6 +44,7 @@ public class Order {
         this.totalAmount = totalAmount;
         this.finalAmount = finalAmount;
         this.failReason = failReason;
+        this.orderProducts = new ArrayList<>();
     }
 
     public void addOrderProduct(OrderProduct orderProduct) {

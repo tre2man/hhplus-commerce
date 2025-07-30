@@ -53,6 +53,9 @@ public class Balance {
         if (chargeAmount < MIN_AMOUNT) {
             throw new IllegalArgumentException("충전 금액은 1원 이상이어야 합니다.");
         }
+        if (chargeAmount > MAX_CHARGE_AMOUNT) {
+            throw new IllegalArgumentException("1회 충전 금액은 " + MAX_CHARGE_AMOUNT + "원을 초과할 수 없습니다.");
+        }
         if (this.amount + chargeAmount > MAX_AMOUNT) {
             throw new IllegalArgumentException("잔액이 최대 금액을 초과할 수 없습니다.");
         }

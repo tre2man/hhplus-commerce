@@ -80,7 +80,7 @@ class ProductServiceTest {
         boolean isInStock = productService.checkStock(productId, quantity);
 
         // Then
-        assertThat(isInStock).isFalse();
+        assertThat(isInStock).isTrue();
     }
 
     @DisplayName("[실패] 상품 재고 없음")

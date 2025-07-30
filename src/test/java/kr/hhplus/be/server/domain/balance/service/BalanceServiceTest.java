@@ -5,9 +5,11 @@ import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
@@ -15,6 +17,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class BalanceServiceTest {
     private BalanceService balanceService;
 
@@ -40,7 +43,7 @@ class BalanceServiceTest {
         when(this.balanceRepository.save(balance)).thenReturn(Balance.create(userId, expectedAmount));
 
         // When
-        Balance updatedBalance = balanceService.useBalance(userId, addAmount);
+        Balance updatedBalance = balanceService.chargeBalance(userId, addAmount);
 
         // Then
         assertThat(updatedBalance.getAmount()).isEqualTo(expectedAmount);
@@ -56,7 +59,7 @@ class BalanceServiceTest {
 
         // When, Then
         assertThatThrownBy(() -> {
-            balanceRepository.findByUserId(userId);
+            balanceService.chargeBalance(userId, 1000);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -74,7 +77,7 @@ class BalanceServiceTest {
         when(this.balanceRepository.save(balance)).thenReturn(Balance.create(userId, expectedAmount));
 
         // When
-        Balance updatedBalance = balanceService.chargeBalance(userId, useAmount);
+        Balance updatedBalance = balanceService.useBalance(userId, useAmount);
 
         // Then
         assertThat(updatedBalance.getAmount()).isEqualTo(expectedAmount);
@@ -90,7 +93,7 @@ class BalanceServiceTest {
 
         // When, Then
         assertThatThrownBy(() -> {
-            balanceRepository.findByUserId(userId);
+            balanceService.useBalance(userId, 1000);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -1,26 +1,29 @@
 package kr.hhplus.be.server.domain.order.service;
 
+import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.dataPlatform.service.DataPlatformService;
 import kr.hhplus.be.server.domain.order.entity.Order;
+import kr.hhplus.be.server.domain.order.entity.OrderProduct;
+import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import kr.hhplus.be.server.domain.product.vo.CreateOrderProductUseCaseVo;
 import kr.hhplus.be.server.domain.product.vo.CreateOrderUseCaseVo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-
-import javax.naming.InsufficientResourcesException;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class OrderFacadeTest {
     private OrderFacade orderFacade;
 
@@ -51,14 +54,21 @@ class OrderFacadeTest {
     void 주문_생성_성공() {
         // Given
         Long userId = 1L;
-
         CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of( userId, List.of(productVo));
+        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo));
+
+        Product mockProduct = Product.create("상품명", 10, 1000, "설명");
+        Balance mockBalance = mock(Balance.class);
+
+        Order realOrder = Order.create(userId, 2000, 2000, null);
+        realOrder.addOrderProduct(
+                OrderProduct.create(realOrder, mockProduct.getId(), mockProduct.getPrice(), productVo.getQuantity())
+        );
 
         when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
-        when(balanceService.hasSufficientBalance(anyLong(), anyInt())).thenReturn(true);
-        when(balanceService.useBalance(anyLong(), anyInt())).thenReturn(any());
-        when(orderService.save(any())).thenReturn(any(Order.class));
+        when(productService.getProductById(1L)).thenReturn(mockProduct);
+        when(balanceService.useBalance(anyLong(), anyInt())).thenReturn(mockBalance);
+        when(orderService.save(any(Order.class))).thenReturn(realOrder);
         doNothing().when(dataPlatformService).sendOrderData(any(Order.class));
 
         // When
@@ -66,6 +76,7 @@ class OrderFacadeTest {
 
         // Then
         assertThat(order).isNotNull();
+        assertThat(order.getOrderProducts()).isNotNull();
     }
 
     @Test
@@ -73,7 +84,6 @@ class OrderFacadeTest {
     void 주문_생성_실패_재고_부족() {
         // Given
         Long userId = 1L;
-        Long issuedCouponId = 1L;
 
         CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
         CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo));
@@ -82,24 +92,27 @@ class OrderFacadeTest {
 
         // When, Then
         assertThatThrownBy(() -> orderFacade.createOrder(createOrderUseCaseVo))
-                .isInstanceOf(InsufficientResourcesException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
+
 
     @Test
     @DisplayName("[실패] 주문 생성 실패 - 잔액 부족")
     void 주문_생성_실패_잔액_부족() {
         // Given
         Long userId = 1L;
-        Long issuedCouponId = 1L;
-
         CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
         CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo));
 
+        // 필수 mock
+        Product product = Product.create("상품명", 10, 1000, "desc");
+
         when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
-        when(balanceService.hasSufficientBalance(anyLong(), anyInt())).thenReturn(false);
+        when(productService.getProductById(1L)).thenReturn(product); // ★ 추가
+        when(balanceService.useBalance(anyLong(), anyInt())).thenThrow(new IllegalArgumentException());
 
         // When, Then
         assertThatThrownBy(() -> orderFacade.createOrder(createOrderUseCaseVo))
-                .isInstanceOf(InsufficientResourcesException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
