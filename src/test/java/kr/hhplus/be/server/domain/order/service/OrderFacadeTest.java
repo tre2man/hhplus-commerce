@@ -2,9 +2,11 @@ package kr.hhplus.be.server.domain.order.service;
 
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
+import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
 import kr.hhplus.be.server.domain.dataPlatform.service.DataPlatformService;
 import kr.hhplus.be.server.domain.order.entity.Order;
 import kr.hhplus.be.server.domain.order.entity.OrderProduct;
+import kr.hhplus.be.server.domain.order.vo.CreateOrderVo;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import kr.hhplus.be.server.domain.product.vo.CreateOrderProductUseCaseVo;
@@ -17,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -39,13 +42,17 @@ class OrderFacadeTest {
     @Mock
     private DataPlatformService dataPlatformService;
 
+    @Mock
+    private IssuedCouponService issuedCouponService;
+
     @BeforeEach
     void setUp() {
         orderFacade = new OrderFacade(
                 orderService,
                 productService,
                 balanceService,
-                dataPlatformService
+                dataPlatformService,
+                issuedCouponService
         );
     }
 
@@ -54,8 +61,8 @@ class OrderFacadeTest {
     void 주문_생성_성공() {
         // Given
         Long userId = 1L;
-        CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo));
+        CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 1);
+        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo), Optional.empty());
 
         Product mockProduct = Product.create("상품명", 10, 1000, "설명");
         Balance mockBalance = mock(Balance.class);
@@ -66,10 +73,38 @@ class OrderFacadeTest {
         );
 
         when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
-        when(productService.getProductById(1L)).thenReturn(mockProduct);
         when(balanceService.useBalance(anyLong(), anyInt())).thenReturn(mockBalance);
-        when(orderService.save(any(Order.class))).thenReturn(realOrder);
-        doNothing().when(dataPlatformService).sendOrderData(any(Order.class));
+        when(orderService.createOrder(any(CreateOrderVo.class))).thenReturn(realOrder);
+        doNothing().when(dataPlatformService).sendOrderData();
+
+        // When
+        Order order = orderFacade.createOrder(createOrderUseCaseVo);
+
+        // Then
+        assertThat(order).isNotNull();
+        assertThat(order.getOrderProducts()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("[성공] 쿠폰을 사용한 주문 생성")
+    void 쿠폰_사용_주문_생성_성공() {
+        // Given
+        Long userId = 1L;
+        CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
+        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo), Optional.empty());
+
+        Product mockProduct = Product.create("상품명", 10, 1000, "설명");
+        Balance mockBalance = mock(Balance.class);
+
+        Order realOrder = Order.create(userId, 2000, 2000, null);
+        realOrder.addOrderProduct(
+                OrderProduct.create(realOrder, mockProduct.getId(), mockProduct.getPrice(), productVo.getQuantity())
+        );
+
+        when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
+        when(balanceService.useBalance(anyLong(), anyInt())).thenReturn(mockBalance);
+        when(orderService.createOrder(any(CreateOrderVo.class))).thenReturn(realOrder);
+        doNothing().when(dataPlatformService).sendOrderData();
 
         // When
         Order order = orderFacade.createOrder(createOrderUseCaseVo);
@@ -86,7 +121,7 @@ class OrderFacadeTest {
         Long userId = 1L;
 
         CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo));
+        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo), Optional.empty());
 
         when(productService.checkStock(anyLong(), anyInt())).thenReturn(false);
 
@@ -102,13 +137,12 @@ class OrderFacadeTest {
         // Given
         Long userId = 1L;
         CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo));
+        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo), Optional.empty());
 
         // 필수 mock
         Product product = Product.create("상품명", 10, 1000, "desc");
 
         when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
-        when(productService.getProductById(1L)).thenReturn(product); // ★ 추가
         when(balanceService.useBalance(anyLong(), anyInt())).thenThrow(new IllegalArgumentException());
 
         // When, Then
