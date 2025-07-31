@@ -46,6 +46,12 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
 	testImplementation("org.projectlombok:lombok")
+	// testContainer (for MySQL)
+	testImplementation("org.testcontainers:testcontainers")
+	testImplementation("org.testcontainers:junit-jupiter")
+	testImplementation("org.testcontainers:jdbc")
+	testImplementation("org.testcontainers:mysql")
+
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testRuntimeOnly("org.projectlombok:lombok")
