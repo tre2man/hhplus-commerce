@@ -1,7 +1,10 @@
 package kr.hhplus.be.server.domain.order.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import kr.hhplus.be.server.domain.product.vo.CreateOrderProductUseCaseVo;
+import lombok.Getter;
 
+@Getter
 public class OrderProductRequest {
     @Schema(description = "상품 ID", example = "12345")
     private Long productId;
@@ -14,11 +17,7 @@ public class OrderProductRequest {
         this.quantity = quantity;
     }
 
-    public Long getProductId() {
-        return productId;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
+    public CreateOrderProductUseCaseVo toCreateOrderProductUseCaseVo() {
+        return CreateOrderProductUseCaseVo.of(this.productId, this.quantity);
     }
 }
