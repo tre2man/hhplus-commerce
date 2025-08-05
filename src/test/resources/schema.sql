@@ -1,13 +1,3 @@
-<!-- 삭제 정책 통일 필요
-상위 상품 조회 시 주문기록을 통해서 조회 (데이터 플랫폼이 아니라) -->
-
-## ERD
-
-![erd](./erd.png)
-
-## DDL
-
-```sql
 CREATE TABLE user (
                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
                       name VARCHAR(100) NOT NULL,
@@ -71,9 +61,7 @@ CREATE TABLE `order` (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
                          user_id BIGINT NOT NULL,
                          issued_coupon_id BIGINT,
-                         total_amount BIGINT NOT NULL COMMENT '할인 전 원래 가격',
                          discount_amount BIGINT NOT NULL COMMENT '쿠폰의 할인 가격',
-                         final_amount BIGINT NOT NULL COMMENT '최종 결제 금액',
                          fail_reason VARCHAR(255) COMMENT '실패 사유',
                          created_at DATETIME NOT NULL
 );
@@ -95,4 +83,3 @@ create TABLE order_payment (
                                used_amount BIGINT NOT NULL COMMENT '사용한 금액',
                                created_at DATETIME NOT NULL
 );
-```
