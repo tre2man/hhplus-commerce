@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.order.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.hhplus.be.server.domain.product.vo.CreateOrderProductUseCaseVo;
+import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
 import lombok.Getter;
 
 @Getter
@@ -17,7 +17,7 @@ public class OrderProductRequest {
         this.quantity = quantity;
     }
 
-    public CreateOrderProductUseCaseVo toCreateOrderProductUseCaseVo() {
-        return CreateOrderProductUseCaseVo.of(this.productId, this.quantity);
+    public OrderProductCommand toCommand() {
+        return new OrderProductCommand(productId, quantity);
     }
 }

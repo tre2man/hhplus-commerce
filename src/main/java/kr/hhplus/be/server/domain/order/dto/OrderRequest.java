@@ -1,11 +1,10 @@
 package kr.hhplus.be.server.domain.order.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.hhplus.be.server.domain.product.vo.CreateOrderUseCaseVo;
+import kr.hhplus.be.server.domain.order.command.OrderCommand;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Schema(description = "주문 요청 정보")
@@ -16,22 +15,21 @@ public class OrderRequest {
     @Schema(description = "주문할 상품 목록")
     private List<OrderProductRequest> products;
 
-    @Schema(description = "쿠폰 아이디", nullable = true)
-    private Optional<Long> couponId;
+    @Schema(description = "결제 정보")
+    private OrderPaymentRequest payment;
 
-    public OrderRequest(Long userId, List<OrderProductRequest> products, Optional<Long> couponId) {
-        this.userId = userId;
-        this.products = products;
-        this.couponId = couponId;
-    }
+    @Schema(description = "사용할 잔액 정보")
+    private OrderUseBalanceRequest useBalance;
 
-    public CreateOrderUseCaseVo toCreateOrderUseCaseVo() {
-        return CreateOrderUseCaseVo.of(
-                this.userId,
-                this.products.stream()
-                        .map(OrderProductRequest::toCreateOrderProductUseCaseVo)
-                        .toList(),
-                this.couponId
+    @Schema(description = "사용할 쿠폰 정보", nullable = true)
+    private List<OrderUseCouponRequest> useCoupons;
+
+    public OrderCommand toCommand() {
+        return new OrderCommand(
+                products.stream().map(OrderProductRequest::toCommand).toList(),
+                payment.toCommand(),
+                useBalance != null ? useBalance.toCommand() : null,
+                useCoupons != null ? useCoupons.stream().map(OrderUseCouponRequest::toCommand).toList() : null
         );
     }
 }

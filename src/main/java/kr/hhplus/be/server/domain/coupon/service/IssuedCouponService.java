@@ -1,35 +1,37 @@
 package kr.hhplus.be.server.domain.coupon.service;
 
+import kr.hhplus.be.server.domain.coupon.command.CreateIssuedCouponCommand;
 import kr.hhplus.be.server.domain.coupon.entity.IssuedCoupon;
 import kr.hhplus.be.server.domain.coupon.repository.IssuedCouponRepository;
 import kr.hhplus.be.server.domain.coupon.vo.UserCouponVo;
+import kr.hhplus.be.server.domain.order.command.UseCouponCommand;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class IssuedCouponService {
     private final IssuedCouponRepository issuedCouponRepository;
 
-    public IssuedCouponService(IssuedCouponRepository issuedCouponRepository) {
-        this.issuedCouponRepository = issuedCouponRepository;
-    }
-
-    public void createIssuedCoupon(Long userId, Long couponId, Integer expireDays) {
+    public void createIssuedCoupon(CreateIssuedCouponCommand command) {
         IssuedCoupon issuedCoupon = IssuedCoupon.create(
-                userId,
-                couponId,
-                LocalDateTime.now().plusDays(expireDays)
+                command.userId(),
+                command.couponId(),
+                LocalDateTime.now().plusDays(command.expireDays())
         );
         issuedCouponRepository.save(issuedCoupon);
     }
 
-    public void useCoupon(Long issuedCouponId) {
-        IssuedCoupon issuedCoupon = issuedCouponRepository.findById(issuedCouponId)
-                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
-        issuedCoupon.use();
-        issuedCouponRepository.save(issuedCoupon);
+    public void useCoupon(List<UseCouponCommand> commandList) {
+        for (UseCouponCommand command : commandList) {
+            IssuedCoupon issuedCoupon = issuedCouponRepository.findById(command.issuedCouponId())
+                    .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+            issuedCoupon.use();
+            issuedCouponRepository.save(issuedCoupon);
+        }
     }
 
     public UserCouponVo getUserCouponByIssuedCouponId(Long issuedCouponId) {
@@ -38,9 +40,9 @@ public class IssuedCouponService {
         return UserCouponVo.of(issuedCoupon);
     }
 
-    public List<UserCouponVo> getUserCouponByUserId(Long userId) {
-        List<IssuedCoupon> issuedCoupons =  issuedCouponRepository.findByUserId(userId);
-        return issuedCoupons.stream()
+    public List<UserCouponVo> getUserCoupons(Long userId) {
+        List<IssuedCoupon> issuedCouponList = issuedCouponRepository.findByUserId(userId);
+        return issuedCouponList.stream()
                 .map(UserCouponVo::of)
                 .toList();
     }

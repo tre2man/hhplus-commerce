@@ -1,6 +1,7 @@
-package kr.hhplus.be.server.domain.balance.service;
+package kr.hhplus.be.server.domain.balance.facade;
 
 import kr.hhplus.be.server.domain.balance.entity.Balance;
+import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,10 +15,6 @@ public class BalanceFacade {
     public Balance getBalance(Long userId) {
         return balanceService.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("잔액을 찾을 수 없습니다."));
-    }
-
-    public Balance useBalance(Long userId, Integer amount) {
-        return this.balanceService.useBalance(userId, amount);
     }
 
     public void chargeBalance(Long userId, Integer chargeAmount) {

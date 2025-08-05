@@ -2,15 +2,13 @@ package kr.hhplus.be.server.domain.coupon.service;
 
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CouponService {
     private final CouponRepository couponRepository;
-
-    public CouponService(CouponRepository couponRepository) {
-        this.couponRepository = couponRepository;
-    }
 
     public void issueCoupon(Long couponId) {
         Coupon coupon = couponRepository.findById(couponId)
