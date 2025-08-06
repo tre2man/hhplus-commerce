@@ -17,6 +17,9 @@
 ## 아키텍쳐 문서
 [아키텍쳐 문서 링크](docs/architecture/architecture.md)
 
+## 동시성 문제 보고서
+[동시성 문제 보고서](docs/concurrency/concurrency.md)
+
 ## 서버 실행
 
 `local` profile 로 실행하기 위하여 인프라가 설정되어 있는 Docker 컨테이너를 실행해주셔야 합니다.
