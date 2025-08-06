@@ -23,7 +23,7 @@ public class OrderFacade {
     public void createOrder(Long userId, OrderCommand orderCommand) {
         orderService.createOrder(userId, orderCommand);
         productService.decreaseStock(orderCommand.productCommandList());
-        balanceService.useBalance(userId, orderCommand.useBalanceCommand().useAmount());
+        balanceService.useBalance(orderCommand.useBalanceCommand());
         issuedCouponService.useCoupon(orderCommand.useCouponCommandList());
         dataPlatformService.sendOrderData();
     }
