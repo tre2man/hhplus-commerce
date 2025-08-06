@@ -5,8 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity(name = "balance")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 public class Balance {
@@ -26,14 +30,14 @@ public class Balance {
 
     @CreatedDate
     @Column(name = "created_at", nullable = false)
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
     @Column(name = "deleted_at")
-    private String deletedAt;
+    private LocalDateTime deletedAt;
 
     protected Balance() {}
 

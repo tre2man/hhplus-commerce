@@ -25,14 +25,13 @@ public class ProductService {
     public void decreaseStock(List<OrderProductCommand> command) {
         for (OrderProductCommand orderProductCommand : command) {
             Long productId = orderProductCommand.productId();
-            int quantity = orderProductCommand.quantity();
-
             Product product = this.getProductById(productId);
+
+            Integer quantity = orderProductCommand.quantity();
             product.decreaseStock(quantity);
             this.productRepository.save(product);
         }
     }
-
 
     public List<Product> getAllProducts() {
         return this.productRepository.findAll();

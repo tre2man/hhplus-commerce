@@ -17,7 +17,7 @@ public class DatabaseClean {
         @Transactional
         public void execute() {
             List<String> tableNames = listOf(
-                    "balance", "coupon", "issued_coupon", "`order`", "order_product", "product"
+                    "balance", "balance_history", "coupon", "issued_coupon", "`order`", "order_product", "order_payment", "product"
             );
 
             for (String tableName : tableNames) {

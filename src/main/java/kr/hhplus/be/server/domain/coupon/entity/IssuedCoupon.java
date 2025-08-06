@@ -59,6 +59,9 @@ public class IssuedCoupon {
         if (this.usedAt != null) {
             throw new IllegalStateException("이미 사용된 쿠폰입니다.");
         }
+        if (this.expireAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("만료된 쿠폰입니다.");
+        }
         this.usedAt = LocalDateTime.now();
     }
 }

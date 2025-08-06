@@ -34,12 +34,6 @@ public class IssuedCouponService {
         }
     }
 
-    public UserCouponVo getUserCouponByIssuedCouponId(Long issuedCouponId) {
-        IssuedCoupon issuedCoupon = issuedCouponRepository.findById(issuedCouponId)
-                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
-        return UserCouponVo.of(issuedCoupon);
-    }
-
     public List<UserCouponVo> getUserCoupons(Long userId) {
         List<IssuedCoupon> issuedCouponList = issuedCouponRepository.findByUserId(userId);
         return issuedCouponList.stream()
