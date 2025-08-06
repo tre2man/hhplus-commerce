@@ -1,19 +1,15 @@
 package kr.hhplus.be.server.domain.order.service;
 
-import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
-import kr.hhplus.be.server.domain.coupon.entity.Coupon;
-import kr.hhplus.be.server.domain.coupon.entity.IssuedCoupon;
 import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
-import kr.hhplus.be.server.domain.coupon.vo.UserCouponVo;
 import kr.hhplus.be.server.domain.dataPlatform.service.DataPlatformService;
-import kr.hhplus.be.server.domain.order.entity.Order;
-import kr.hhplus.be.server.domain.order.entity.OrderProduct;
-import kr.hhplus.be.server.domain.order.vo.CreateOrderVo;
-import kr.hhplus.be.server.domain.product.entity.Product;
+import kr.hhplus.be.server.domain.order.command.OrderCommand;
+import kr.hhplus.be.server.domain.order.command.OrderPaymentCommand;
+import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
+import kr.hhplus.be.server.domain.order.command.UseBalanceCommand;
+import kr.hhplus.be.server.domain.order.command.UseCouponCommand;
+import kr.hhplus.be.server.domain.order.facade.OrderFacade;
 import kr.hhplus.be.server.domain.product.service.ProductService;
-import kr.hhplus.be.server.domain.product.vo.CreateOrderProductUseCaseVo;
-import kr.hhplus.be.server.domain.product.vo.CreateOrderUseCaseVo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,11 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -65,28 +58,35 @@ class OrderFacadeTest {
     void 주문_생성_성공() {
         // Given
         Long userId = 1L;
-        CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 1);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo), Optional.empty());
-
-        Product mockProduct = Product.create("상품명", 10, 1000, "설명");
-        Balance mockBalance = mock(Balance.class);
-
-        Order realOrder = Order.create(userId, 2000, 2000, null);
-        realOrder.addOrderProduct(
-                OrderProduct.create(realOrder, mockProduct.getId(), mockProduct.getPrice(), productVo.getQuantity())
+        List<OrderProductCommand> productCommands = List.of(
+                new OrderProductCommand(1L, 1)
+        );
+        OrderPaymentCommand paymentCommand = new OrderPaymentCommand(1000, 0, 1000);
+        UseBalanceCommand useBalanceCommand = new UseBalanceCommand(userId, 1000);
+        List<UseCouponCommand> useCouponCommands = List.of();
+        
+        OrderCommand orderCommand = new OrderCommand(
+                productCommands,
+                paymentCommand,
+                useBalanceCommand,
+                useCouponCommands
         );
 
-        when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
-        when(balanceService.useBalance(anyLong(), anyInt())).thenReturn(mockBalance);
-        when(orderService.createOrder(any(CreateOrderVo.class))).thenReturn(realOrder);
+        doNothing().when(orderService).createOrder(userId, orderCommand);
+        doNothing().when(productService).decreaseStock(productCommands);
+        doNothing().when(balanceService).useBalance(useBalanceCommand);
+        doNothing().when(issuedCouponService).useCoupon(useCouponCommands);
         doNothing().when(dataPlatformService).sendOrderData();
 
         // When
-        Order order = orderFacade.createOrder(createOrderUseCaseVo);
+        orderFacade.createOrder(userId, orderCommand);
 
         // Then
-        assertThat(order).isNotNull();
-        assertThat(order.getOrderProducts()).isNotNull();
+        verify(orderService).createOrder(userId, orderCommand);
+        verify(productService).decreaseStock(productCommands);
+        verify(balanceService).useBalance(useBalanceCommand);
+        verify(issuedCouponService).useCoupon(useCouponCommands);
+        verify(dataPlatformService).sendOrderData();
     }
 
     @Test
@@ -95,31 +95,37 @@ class OrderFacadeTest {
         // Given
         Long userId = 1L;
         Long issuedCouponId = 1L;
-        Long couponId = 1L;
-        Integer discountAmount = 1000;
-        CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo), Optional.of(issuedCouponId));
-
-        Product mockProduct = Product.create("상품명", 10, 1000, "설명");
-        Balance mockBalance = mock(Balance.class);
-
-        Order realOrder = Order.create(userId, 2000, 2000, null);
-        realOrder.addOrderProduct(
-                OrderProduct.create(realOrder, mockProduct.getId(), mockProduct.getPrice(), productVo.getQuantity())
+        List<OrderProductCommand> productCommands = List.of(
+                new OrderProductCommand(1L, 2)
+        );
+        OrderPaymentCommand paymentCommand = new OrderPaymentCommand(2000, 1000, 1000);
+        UseBalanceCommand useBalanceCommand = new UseBalanceCommand(userId, 1000);
+        List<UseCouponCommand> useCouponCommands = List.of(
+                new UseCouponCommand(userId, issuedCouponId)
+        );
+        
+        OrderCommand orderCommand = new OrderCommand(
+                productCommands,
+                paymentCommand,
+                useBalanceCommand,
+                useCouponCommands
         );
 
-        when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
-        when(balanceService.useBalance(anyLong(), anyInt())).thenReturn(mockBalance);
-        when(orderService.createOrder(any(CreateOrderVo.class))).thenReturn(realOrder);
-        when(issuedCouponService.getUserCouponByIssuedCouponId(issuedCouponId)).thenReturn(userCouponVo);
+        doNothing().when(orderService).createOrder(userId, orderCommand);
+        doNothing().when(productService).decreaseStock(productCommands);
+        doNothing().when(balanceService).useBalance(useBalanceCommand);
+        doNothing().when(issuedCouponService).useCoupon(useCouponCommands);
         doNothing().when(dataPlatformService).sendOrderData();
 
         // When
-        Order order = orderFacade.createOrder(createOrderUseCaseVo);
+        orderFacade.createOrder(userId, orderCommand);
 
         // Then
-        assertThat(order).isNotNull();
-        assertThat(order.getOrderProducts()).isNotNull();
+        verify(orderService).createOrder(userId, orderCommand);
+        verify(productService).decreaseStock(productCommands);
+        verify(balanceService).useBalance(useBalanceCommand);
+        verify(issuedCouponService).useCoupon(useCouponCommands);
+        verify(dataPlatformService).sendOrderData();
     }
 
     @Test
@@ -127,31 +133,69 @@ class OrderFacadeTest {
     void 주문_생성_실패_재고_부족() {
         // Given
         Long userId = 1L;
+        List<OrderProductCommand> productCommands = List.of(
+                new OrderProductCommand(1L, 2)
+        );
+        OrderPaymentCommand paymentCommand = new OrderPaymentCommand(2000, 0, 2000);
+        UseBalanceCommand useBalanceCommand = new UseBalanceCommand(userId, 2000);
+        List<UseCouponCommand> useCouponCommands = List.of();
+        
+        OrderCommand orderCommand = new OrderCommand(
+                productCommands,
+                paymentCommand,
+                useBalanceCommand,
+                useCouponCommands
+        );
 
-        CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo), Optional.empty());
-
-        when(productService.checkStock(anyLong(), anyInt())).thenReturn(false);
+        doNothing().when(orderService).createOrder(userId, orderCommand);
+        doThrow(new IllegalArgumentException("재고가 부족합니다."))
+                .when(productService).decreaseStock(productCommands);
 
         // When, Then
-        assertThatThrownBy(() -> orderFacade.createOrder(createOrderUseCaseVo))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        assertThatThrownBy(() -> orderFacade.createOrder(userId, orderCommand))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("재고가 부족합니다.");
 
+        verify(orderService).createOrder(userId, orderCommand);
+        verify(productService).decreaseStock(productCommands);
+        verify(balanceService, never()).useBalance(any());
+        verify(issuedCouponService, never()).useCoupon(any());
+        verify(dataPlatformService, never()).sendOrderData();
+    }
 
     @Test
     @DisplayName("[실패] 주문 생성 실패 - 잔액 부족")
     void 주문_생성_실패_잔액_부족() {
         // Given
         Long userId = 1L;
-        CreateOrderProductUseCaseVo productVo = CreateOrderProductUseCaseVo.of(1L, 2);
-        CreateOrderUseCaseVo createOrderUseCaseVo = CreateOrderUseCaseVo.of(userId, List.of(productVo), Optional.empty());
+        List<OrderProductCommand> productCommands = List.of(
+                new OrderProductCommand(1L, 2)
+        );
+        OrderPaymentCommand paymentCommand = new OrderPaymentCommand(2000, 0, 2000);
+        UseBalanceCommand useBalanceCommand = new UseBalanceCommand(userId, 2000);
+        List<UseCouponCommand> useCouponCommands = List.of();
+        
+        OrderCommand orderCommand = new OrderCommand(
+                productCommands,
+                paymentCommand,
+                useBalanceCommand,
+                useCouponCommands
+        );
 
-        when(productService.checkStock(anyLong(), anyInt())).thenReturn(true);
-        when(balanceService.useBalance(anyLong(), anyInt())).thenThrow(new IllegalArgumentException());
+        doNothing().when(orderService).createOrder(userId, orderCommand);
+        doNothing().when(productService).decreaseStock(productCommands);
+        doThrow(new IllegalArgumentException("잔고를 찾을 수 없습니다."))
+                .when(balanceService).useBalance(useBalanceCommand);
 
         // When, Then
-        assertThatThrownBy(() -> orderFacade.createOrder(createOrderUseCaseVo))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderFacade.createOrder(userId, orderCommand))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("잔고를 찾을 수 없습니다.");
+
+        verify(orderService).createOrder(userId, orderCommand);
+        verify(productService).decreaseStock(productCommands);
+        verify(balanceService).useBalance(useBalanceCommand);
+        verify(issuedCouponService, never()).useCoupon(any());
+        verify(dataPlatformService, never()).sendOrderData();
     }
 }

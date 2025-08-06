@@ -1,7 +1,10 @@
 package kr.hhplus.be.server.domain.balance.service;
 
+import kr.hhplus.be.server.domain.balance.command.ChargeBalanceCommand;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
+import kr.hhplus.be.server.domain.balance.repository.BalanceHistoryRepository;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
+import kr.hhplus.be.server.domain.order.command.UseBalanceCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,9 +27,12 @@ class BalanceServiceTest {
     @Mock
     private BalanceRepository balanceRepository;
 
+    @Mock
+    private BalanceHistoryRepository balanceHistoryRepository;
+
     @BeforeEach
     void setup() {
-        balanceService = new BalanceService(balanceRepository);
+        balanceService = new BalanceService(balanceRepository, balanceHistoryRepository);
     }
 
     @DisplayName("[성공] 잔액 추가 성공")
@@ -39,14 +45,15 @@ class BalanceServiceTest {
         Integer expectedAmount = amount + addAmount;
 
         Balance balance = Balance.create(userId, amount);
+        ChargeBalanceCommand command = new ChargeBalanceCommand(userId, addAmount);
         when(this.balanceRepository.findByUserId(userId)).thenReturn(Optional.of(balance));
         when(this.balanceRepository.save(balance)).thenReturn(Balance.create(userId, expectedAmount));
 
         // When
-        Balance updatedBalance = balanceService.chargeBalance(userId, addAmount);
+        balanceService.chargeBalance(command);
 
         // Then
-        assertThat(updatedBalance.getAmount()).isEqualTo(expectedAmount);
+        assertThat(balance.getAmount()).isEqualTo(expectedAmount);
     }
 
     @DisplayName("[실패] 잔액 추가 실패 - 잔액을 찾을 수 없음")
@@ -55,11 +62,12 @@ class BalanceServiceTest {
         // Given
         Long userId = 1L;
 
+        ChargeBalanceCommand command = new ChargeBalanceCommand(userId, 1000);
         when(balanceService.findByUserId(userId)).thenReturn(Optional.empty());
 
         // When, Then
         assertThatThrownBy(() -> {
-            balanceService.chargeBalance(userId, 1000);
+            balanceService.chargeBalance(command);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -73,14 +81,15 @@ class BalanceServiceTest {
         Integer expectedAmount = initialAmount - useAmount;
 
         Balance balance = Balance.create(userId, initialAmount);
+        UseBalanceCommand command = new UseBalanceCommand(userId, useAmount);
         when(this.balanceRepository.findByUserId(userId)).thenReturn(Optional.of(balance));
         when(this.balanceRepository.save(balance)).thenReturn(Balance.create(userId, expectedAmount));
 
         // When
-        Balance updatedBalance = balanceService.useBalance(userId, useAmount);
+        balanceService.useBalance(command);
 
         // Then
-        assertThat(updatedBalance.getAmount()).isEqualTo(expectedAmount);
+        assertThat(balance.getAmount()).isEqualTo(expectedAmount);
     }
 
     @DisplayName("[실패] 잔액 사용 실패 - 잔액을 찾을 수 없음")
@@ -89,11 +98,12 @@ class BalanceServiceTest {
         // Given
         Long userId = 1L;
 
+        UseBalanceCommand command = new UseBalanceCommand(userId, 1000);
         when(balanceService.findByUserId(userId)).thenReturn(Optional.empty());
 
         // When, Then
         assertThatThrownBy(() -> {
-            balanceService.useBalance(userId, 1000);
+            balanceService.useBalance(command);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 }

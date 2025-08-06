@@ -1,8 +1,7 @@
-package kr.hhplus.be.server.domain.coupon.service;
+package kr.hhplus.be.server.domain.coupon.facade;
 
 import kr.hhplus.be.server.DatabaseClean;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
-import kr.hhplus.be.server.domain.coupon.facade.CouponFacade;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.vo.UserCouponVo;
 import org.junit.jupiter.api.BeforeEach;
