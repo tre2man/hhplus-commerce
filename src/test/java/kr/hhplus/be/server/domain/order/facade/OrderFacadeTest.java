@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.order.service;
+package kr.hhplus.be.server.domain.order.facade;
 
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
@@ -8,7 +8,7 @@ import kr.hhplus.be.server.domain.order.command.OrderPaymentCommand;
 import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
 import kr.hhplus.be.server.domain.order.command.UseBalanceCommand;
 import kr.hhplus.be.server.domain.order.command.UseCouponCommand;
-import kr.hhplus.be.server.domain.order.facade.OrderFacade;
+import kr.hhplus.be.server.domain.order.service.OrderService;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
