@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.service;
 
+import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +11,9 @@ import org.springframework.stereotype.Service;
 public class CouponService {
     private final CouponRepository couponRepository;
 
+    @Transactional
     public void issueCoupon(Long couponId) {
-        Coupon coupon = couponRepository.findById(couponId)
+        Coupon coupon = couponRepository.findByIdForUpdate(couponId)
                 .orElseThrow(IllegalArgumentException::new);
         coupon.issue();
         couponRepository.save(coupon);
