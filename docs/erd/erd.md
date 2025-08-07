@@ -24,7 +24,8 @@ CREATE TABLE balance (
                          amount INT NOT NULL COMMENT '잔고',
                          created_at DATETIME NOT NULL,
                          updated_at DATETIME NOT NULL,
-                         deleted_at DATETIME
+                         deleted_at DATETIME,
+                         version BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE balance_history (

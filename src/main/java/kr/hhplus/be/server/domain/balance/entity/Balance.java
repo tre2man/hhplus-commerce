@@ -39,6 +39,9 @@ public class Balance {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Version
+    private Long version;
+
     protected Balance() {}
 
     private Balance(Long userId, Integer amount) {
