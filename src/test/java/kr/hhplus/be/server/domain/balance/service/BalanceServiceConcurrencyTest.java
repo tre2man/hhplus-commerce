@@ -23,7 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @SpringBootTest
 @Testcontainers
-class BalanceServiceIntegrationTest {
+class BalanceServiceConcurrencyTest {
     @Autowired
     BalanceService balanceService;
 
