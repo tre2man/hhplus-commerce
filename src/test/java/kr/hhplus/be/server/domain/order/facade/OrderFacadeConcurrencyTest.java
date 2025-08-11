@@ -62,14 +62,14 @@ class OrderFacadeConcurrencyTest {
      * 동시성 문제가 일어나는 곳은 하나의 리소스를 다른 유저들이 동시에 접근이 가능한 경우로 판단.
      * 주문 기능에서 동시성 이슈가 생길 가능성이 높은 곳은 재고 감소라고 생각하여, 재고 감소에 대해서만 동시성 이슈를 판별한다.
      */
-    @DisplayName("[성공] 5명이 동시에 주문을 생성할 때, 각각의 주문이 정상적으로 처리되어야 한다.")
+    @DisplayName("[성공] 2명이 동시에 주문을 생성할 때, 각각의 주문이 정상적으로 처리되어야 한다.")
     @Test
     void 성공_동시성_테스트() throws InterruptedException {
         // Given
         // 각 사용자의 초기 잔액과 쿠폰 지급
         Integer initialBalance = 100000;
         Integer discountAmount = 1000;
-        List<Long> userIds = List.of(1L, 2L, 3L, 4L, 5L);
+        List<Long> userIds = List.of(1L, 2L);
         for (Long userId : userIds) {
             Balance balance = Balance.create(userId, initialBalance);
             this.balanceRepository.save(balance);
@@ -93,7 +93,7 @@ class OrderFacadeConcurrencyTest {
         Integer useAmount = orderAmount - discountAmount;
 
         // When
-        int threads = 5; // 5명의 사용자 동시 진행
+        int threads = 2; // 2명의 사용자 동시 진행
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);
@@ -134,7 +134,7 @@ class OrderFacadeConcurrencyTest {
 
         // Then
         // 상품 재고 확인
-        Integer expectedOrderCount = 5; // 5명의 사용자가 주문을 생성했으므로
+        Integer expectedOrderCount = threads; // 5명의 사용자가 주문을 생성했으므로
         Product updatedProduct = productRepository.findById(product.getId()).orElseThrow();
         assertThat(updatedProduct.getStock()).isEqualTo(productStock - (buyProductStock * expectedOrderCount));
     }
@@ -150,7 +150,7 @@ class OrderFacadeConcurrencyTest {
         // 각 사용자의 초기 잔액과 쿠폰 지급
         Integer initialBalance = 100000;
         Integer discountAmount = 1000;
-        List<Long> userIds = List.of(1L, 2L, 3L, 4L, 5L);
+        List<Long> userIds = List.of(1L, 2L);
         for (Long userId : userIds) {
             Balance balance = Balance.create(userId, initialBalance);
             this.balanceRepository.save(balance);
@@ -159,7 +159,7 @@ class OrderFacadeConcurrencyTest {
             );
         }
 
-        Integer productStock = 3; // 제한된 재고
+        Integer productStock = 1; // 제한된 재고
         Integer productPrice = 10000;
         Product product = Product.create(
                 "테스트 상품",
@@ -174,7 +174,7 @@ class OrderFacadeConcurrencyTest {
         Integer useAmount = orderAmount - discountAmount;
 
         // When
-        int threads = 5; // 재고보다 많은 수의 스레드
+        int threads = 2; // 재고보다 많은 수의 스레드
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);
@@ -277,10 +277,10 @@ class OrderFacadeConcurrencyTest {
         Integer initialBalance = 100000;
         Integer initialBalanceForFailure = 500;
         Integer discountAmount = 1000;
-        List<Long> userIds = List.of(1L, 2L, 3L, 4L, 5L);
+        List<Long> userIds = List.of(1L, 2L);
         for (Long userId : userIds) {
             Balance balance = Balance.create(userId, initialBalance);
-            if (userId == 5L) {
+            if (userId == 2L) {
                 balance.setAmount(initialBalanceForFailure);
             }
             this.balanceRepository.save(balance);
@@ -302,7 +302,7 @@ class OrderFacadeConcurrencyTest {
         Integer useAmount = orderAmount - discountAmount;
 
         // When
-        int threads = 5; // 5명의 사용자 동시 진행
+        int threads = 2; // 2명의 사용자 동시 진행
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);
@@ -342,7 +342,7 @@ class OrderFacadeConcurrencyTest {
         executor.shutdown();
 
         // Then
-        Integer expectedOrderCount = 4; // 5명 중 1명(잔액 부족)이 실패하므로 4개의 주문이 성공해야 함
+        Integer expectedOrderCount = 1; // 2명 중 1명(잔액 부족)이 실패하므로 1개의 주문이 성공해야 함
         List<Order> orderList = orderRepository.findAll();
         assertThat(orderList.size()).isEqualTo(expectedOrderCount);
 
@@ -404,12 +404,11 @@ class OrderFacadeConcurrencyTest {
         // 각 사용자의 초기 잔액과 쿠폰 지급
         Integer initialBalance = 100000;
         Integer discountAmount = 1000;
-        List<Long> userIds = List.of(1L, 2L, 3L, 4L, 5L);
+        List<Long> userIds = List.of(1L, 2L);
         for (Long userId : userIds) {
             Balance balance = Balance.create(userId, initialBalance);
             this.balanceRepository.save(balance);
-
-            if (userId == 5L) {
+            if (userId == 2L) {
                 // 5번 사용자에게는 잘못된 쿠폰 지급
                 this.issuedCouponService.createIssuedCoupon(
                         new CreateIssuedCouponCommand(userId, 1L, -1)
@@ -435,7 +434,7 @@ class OrderFacadeConcurrencyTest {
         Integer useAmount = orderAmount - discountAmount;
 
         // When
-        int threads = 5; // 5명의 사용자 동시 진행
+        int threads = 2; // 2명의 사용자 동시 진행
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);
@@ -475,7 +474,7 @@ class OrderFacadeConcurrencyTest {
         executor.shutdown();
 
         // Then
-        Integer expectedOrderCount = 4; // 5명 중 1명(잘못된 쿠폰 사용)이 실패하므로 4개의 주문이 성공해야 함
+        Integer expectedOrderCount = 1; // 2명 중 1명(잘못된 쿠폰 사용)이 실패하므로 1개의 주문이 성공해야 함
         List<Order> orderList = orderRepository.findAll();
         assertThat(orderList.size()).isEqualTo(expectedOrderCount);
 

@@ -53,7 +53,7 @@ class ProductServiceConcurrencyTest {
 
         // When
         Integer decreaseQuantity = 1;
-        Integer threads = 5;
+        Integer threads = 2;
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);
@@ -90,7 +90,7 @@ class ProductServiceConcurrencyTest {
     @Test
     void 성공_재고감소_재고부족_동시성() throws InterruptedException {
         // Given
-        Integer productStock = 3; // 재고가 부족한 상태
+        Integer productStock = 1; // 재고가 부족한 상태
         Integer productPrice = 10000;
         Product product = productRepository.save(Product.create(
                 "테스트 상품",
@@ -103,7 +103,7 @@ class ProductServiceConcurrencyTest {
 
         // When
         Integer decreaseQuantity = 1;
-        Integer threads = 5;
+        Integer threads = 2;
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);

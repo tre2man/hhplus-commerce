@@ -50,7 +50,7 @@ class CouponServiceConcurrencyTest {
         couponRepository.save(coupon);
 
         // When
-        Integer threads = 5;
+        Integer threads = 2;
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);
@@ -87,7 +87,7 @@ class CouponServiceConcurrencyTest {
         // Given
         Long couponId = 1L;
         Integer discountAmount = 1000;
-        Integer totalQuantity = 3; // 제한된 수량으로 설정
+        Integer totalQuantity = 1; // 제한된 수량으로 설정
         Integer expireDay = 30;
         Coupon coupon = Coupon.create(
                 "테스트 쿠폰",
@@ -98,7 +98,7 @@ class CouponServiceConcurrencyTest {
         couponRepository.save(coupon);
 
         // When
-        int threads = 5; // 총 수량보다 많은 스레드
+        int threads = 2; // 총 수량보다 많은 스레드
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);

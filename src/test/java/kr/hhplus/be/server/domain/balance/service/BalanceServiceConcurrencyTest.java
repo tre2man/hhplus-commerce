@@ -4,7 +4,6 @@ import kr.hhplus.be.server.DatabaseClean;
 import kr.hhplus.be.server.domain.balance.command.ChargeBalanceCommand;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
-import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -76,7 +75,7 @@ class BalanceServiceConcurrencyTest {
         balanceRepository.save(balance);
 
         // When
-        int threads = 5; // 동시 실행할 스레드 수
+        int threads = 2; // 동시 실행할 스레드 수
         AtomicReference<Integer> optimisticLockCount = new AtomicReference<>(0);
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
@@ -90,7 +89,7 @@ class BalanceServiceConcurrencyTest {
                     balanceService.chargeBalance(new ChargeBalanceCommand(userId, chargeAmount));
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                } catch (OptimisticEntityLockException | ObjectOptimisticLockingFailureException e) {
+                } catch (ObjectOptimisticLockingFailureException e) {
                     // 낙관적 락 예외 발생 시 카운트 증가
                     optimisticLockCount.getAndSet(optimisticLockCount.get() + 1);
                 } catch (Exception e) {

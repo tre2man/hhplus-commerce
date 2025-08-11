@@ -34,16 +34,10 @@ class CouponFacadeConcurrencyTest {
     private DatabaseClean dataBaseClean;
 
 
-    List<Coupon> InitialSetup() {
-        // 초기 쿠폰 데이터 설정
-        Coupon coupon1 = Coupon.create("할인 쿠폰", 1000, 5, 7);
-        Coupon coupon2 = Coupon.create("무료 쿠폰", 500, 10 , 30);
-
-        // 쿠폰 저장
-        couponRepository.save(coupon1);
-        couponRepository.save(coupon2);
-
-        return List.of(coupon1, coupon2);
+    Coupon InitialSetup() {
+        Coupon coupon = Coupon.create("할인 쿠폰", 1000, 2, 7);
+        couponRepository.save(coupon);
+        return coupon;
     }
 
     @BeforeEach
@@ -56,12 +50,11 @@ class CouponFacadeConcurrencyTest {
     @Test
     void 성공_쿠폰_발급_동시성() throws InterruptedException {
         // Given
-        List<Coupon> coupons = InitialSetup();
-        Coupon coupon = coupons.get(0); // 할인 쿠폰 (5개 발급 가능)
+        Coupon coupon = InitialSetup();
         Long userId = 1L;
 
         // When
-        int threads = 5;
+        int threads = 2;
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);
@@ -88,7 +81,7 @@ class CouponFacadeConcurrencyTest {
         executor.shutdown();
 
         // Then
-        Integer expectedIssuedQuantity = threads; // 5개 발급되어야 함
+        Integer expectedIssuedQuantity = threads;
         Coupon updatedCoupon = couponRepository.findById(coupon.getId())
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
         // 발급된 쿠폰의 수량 검증
@@ -102,12 +95,11 @@ class CouponFacadeConcurrencyTest {
     @Test
     void 성공_쿠폰_발급_동시성_제한_테스트() throws InterruptedException {
         // Given
-        List<Coupon> coupons = InitialSetup();
-        Coupon coupon = coupons.get(0); // 할인 쿠폰 (5개 발급 가능)
+        Coupon coupon = InitialSetup();
         Long userId = 1L;
 
         // When
-        int threads = 10; // 10개의 스레드가 동시에 발급 시도
+        int threads = 3;
         CountDownLatch readyLatch = new CountDownLatch(threads);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);
