@@ -18,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @Testcontainers
-class CouponServiceIntegrationTest {
+class CouponServiceConcurrencyTest {
     @Autowired
     CouponService couponService;
 

@@ -1,10 +1,9 @@
-package kr.hhplus.be.server.domain.order.service;
+package kr.hhplus.be.server.domain.product.service;
 
 import kr.hhplus.be.server.DatabaseClean;
 import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.repository.ProductRepository;
-import kr.hhplus.be.server.domain.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @Testcontainers
-class ProductServiceIntegrationTest {
+class ProductServiceConcurrencyTest {
     @Autowired
     private ProductService productService;
 
