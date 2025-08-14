@@ -39,7 +39,10 @@ public class ProductController {
     @ApiResponse(responseCode = "200", description = "인기 상품 정보 조회 성공")
     @GetMapping("/popular")
     public ResponseEntity<List<GetProductResponse>> getPopularProducts() {
+        Long start = System.currentTimeMillis();
         List<GetProductResponse> responseList = productFacade.getPopularProducts();
+        Long end = System.currentTimeMillis();
+        System.out.println("상품 조회 시간: " + (end - start) + "ms");
         return ResponseEntity.ok(responseList);
     }
 }

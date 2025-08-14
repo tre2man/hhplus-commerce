@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cache.CacheManager;
 
 import java.util.Optional;
 
@@ -23,9 +24,12 @@ class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private CacheManager cacheManager;
+
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productRepository);
+        productService = new ProductService(productRepository, cacheManager);
     }
 
     @Test

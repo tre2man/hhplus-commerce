@@ -3,6 +3,8 @@ package kr.hhplus.be.server.domain.product.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.hhplus.be.server.domain.product.vo.ProductVo;
 import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Schema(description = "상품 정보 조회")
 @Getter
@@ -19,7 +21,13 @@ public class GetProductResponse {
     @Schema(description = "남은 재고 수량", example = "50")
     private Integer stock;
 
-    public GetProductResponse(Long id, String name, Integer price, Integer stock) {
+    @JsonCreator
+    public GetProductResponse(
+        @JsonProperty("id") Long id,
+        @JsonProperty("name") String name,
+        @JsonProperty("price") Integer price,
+        @JsonProperty("stock") Integer stock
+    ) {
         this.id = id;
         this.name = name;
         this.price = price;
