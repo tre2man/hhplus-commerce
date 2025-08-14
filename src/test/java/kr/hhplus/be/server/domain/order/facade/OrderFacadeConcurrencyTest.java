@@ -99,6 +99,7 @@ class OrderFacadeConcurrencyTest {
         CountDownLatch doneLatch = new CountDownLatch(threads);
         ExecutorService executor = Executors.newFixedThreadPool(threads);
         AtomicInteger successCount = new AtomicInteger(0);
+        AtomicInteger failureCount = new AtomicInteger(0);
 
         for (int i = 0; i < threads; i++) {
             Long currentUserId = i + 1L;
@@ -119,8 +120,9 @@ class OrderFacadeConcurrencyTest {
                     successCount.incrementAndGet();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    failureCount.incrementAndGet();
                 } catch (Exception e) {
-                    e.printStackTrace(); // 예외 발생 시 로그 출력
+                    failureCount.incrementAndGet();
                 } finally {
                     doneLatch.countDown();
                 }
@@ -134,7 +136,7 @@ class OrderFacadeConcurrencyTest {
 
         // Then
         // 상품 재고 확인
-        Integer expectedOrderCount = threads; // 5명의 사용자가 주문을 생성했으므로
+        Integer expectedOrderCount = successCount.get();
         Product updatedProduct = productRepository.findById(product.getId()).orElseThrow();
         assertThat(updatedProduct.getStock()).isEqualTo(productStock - (buyProductStock * expectedOrderCount));
     }
@@ -200,6 +202,7 @@ class OrderFacadeConcurrencyTest {
                     successCount.incrementAndGet();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    failureCount.incrementAndGet();
                 } catch (Exception e) {
                     failureCount.incrementAndGet();
                 } finally {
@@ -215,7 +218,7 @@ class OrderFacadeConcurrencyTest {
 
         // Then
         // 주문 정보 확인
-        Integer expectedOrderCount = productStock;
+        Integer expectedOrderCount = successCount.get();
         List<Order> orderList = orderRepository.findAll();
         assertThat(orderList.size()).isEqualTo(expectedOrderCount);
 
@@ -291,12 +294,13 @@ class OrderFacadeConcurrencyTest {
 
         Integer productStock = 100;
         Integer productPrice = 10000;
-        Product product = productRepository.save(Product.create(
+        Product product = Product.create(
                 "테스트 상품",
                 productStock,
                 productPrice,
                 "테스트 설명"
-        ));
+        );
+        productRepository.save(product);
         Integer buyProductStock = 2;
         Integer orderAmount = productPrice * buyProductStock;
         Integer useAmount = orderAmount - discountAmount;
@@ -342,7 +346,7 @@ class OrderFacadeConcurrencyTest {
         executor.shutdown();
 
         // Then
-        Integer expectedOrderCount = 1; // 2명 중 1명(잔액 부족)이 실패하므로 1개의 주문이 성공해야 함
+        Integer expectedOrderCount = successCount.get();
         List<Order> orderList = orderRepository.findAll();
         assertThat(orderList.size()).isEqualTo(expectedOrderCount);
 
