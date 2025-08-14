@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.order.facade;
 
-import jakarta.transaction.Transactional;
+import kr.hhplus.be.server.aop.lock.DistributedLock;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
 import kr.hhplus.be.server.domain.dataPlatform.service.DataPlatformService;
@@ -19,7 +19,7 @@ public class OrderFacade {
     private final DataPlatformService dataPlatformService;
     private final IssuedCouponService issuedCouponService;
 
-    @Transactional
+    @DistributedLock(key = "'ORDER::' + #orderCommand.getDistributedLockKey()")
     public void createOrder(Long userId, OrderCommand orderCommand) {
         orderService.createOrder(userId, orderCommand);
         productService.decreaseStock(orderCommand.productCommandList());
