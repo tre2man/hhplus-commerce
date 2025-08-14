@@ -3,20 +3,22 @@ package kr.hhplus.be.server.domain.product.service;
 import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.repository.ProductRepository;
+import kr.hhplus.be.server.domain.product.vo.ProductVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public Product getProductById(Long productId) {
-        return this.productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. productId: " + productId));
+    public Optional<ProductVo> findProductById(Long productId) {
+        Optional<Product> product = this.productRepository.findById(productId);
+        return product.map(ProductVo::of);
     }
 
     private Product getProductByIdForUpdate(Long productId) {
@@ -24,8 +26,18 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. productId: " + productId));
     }
 
-    public List<Product> getProductsByIds(List<Long> productIds) {
-        return this.productRepository.findAllById(productIds);
+    public List<ProductVo> getProductsByIds(List<Long> productIds) {
+        return this.productRepository.findAllById(productIds)
+                .stream()
+                .map(ProductVo::of)
+                .toList();
+    }
+
+    public List<ProductVo> getAllProducts() {
+        return this.productRepository.findAll()
+                .stream()
+                .map(ProductVo::of)
+                .toList();
     }
 
     @Transactional
@@ -38,9 +50,5 @@ public class ProductService {
             product.decreaseStock(quantity);
             this.productRepository.save(product);
         }
-    }
-
-    public List<Product> getAllProducts() {
-        return this.productRepository.findAll();
     }
 }
