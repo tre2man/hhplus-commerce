@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.product.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import kr.hhplus.be.server.domain.product.vo.ProductVo;
 import lombok.Getter;
 
 @Schema(description = "상품 정보 조회")
@@ -12,23 +13,25 @@ public class GetProductResponse {
     @Schema(description = "상품 이름", example = "상품1")
     private String name;
 
-    @Schema(description = "상품 설명", example = "상품1 설명")
-    private String description;
-
     @Schema(description = "상품 가격", example = "10000")
     private Integer price;
 
     @Schema(description = "남은 재고 수량", example = "50")
     private Integer stock;
 
-    public GetProductResponse(Long id, String name, String description, Integer price) {
+    public GetProductResponse(Long id, String name, Integer price, Integer stock) {
         this.id = id;
         this.name = name;
-        this.description = description;
         this.price = price;
+        this.stock = stock;
     }
 
-    public static GetProductResponse of(Long id, String name, String description, Integer price) {
-        return new GetProductResponse(id, name, description, price);
+    public static GetProductResponse of(ProductVo productVo) {
+        return new GetProductResponse(
+                productVo.getId(),
+                productVo.getName(),
+                productVo.getPrice(),
+                productVo.getStock()
+        );
     }
 }
