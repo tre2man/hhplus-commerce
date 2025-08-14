@@ -18,7 +18,10 @@
 [아키텍쳐 문서 링크](docs/architecture/architecture.md)
 
 ## 동시성 문제 보고서
-[동시성 문제 보고서](docs/concurrency/concurrency.md)
+[동시성 문제 보고서 링크](docs/concurrency/concurrency.md)
+
+## 캐시 보고서
+[캐시 보고서 링크](docs/cache/cache.md)
 
 ## 서버 실행
 
