@@ -58,9 +58,8 @@ class OrderFacadeTest {
     void 주문_생성_성공() {
         // Given
         Long userId = 1L;
-        List<OrderProductCommand> productCommands = List.of(
-                new OrderProductCommand(1L, 1)
-        );
+        OrderProductCommand productCommand = new OrderProductCommand(1L, 1);
+        List<OrderProductCommand> productCommands = List.of(productCommand);
         OrderPaymentCommand paymentCommand = new OrderPaymentCommand(1000, 0, 1000);
         UseBalanceCommand useBalanceCommand = new UseBalanceCommand(userId, 1000);
         List<UseCouponCommand> useCouponCommands = List.of();
@@ -95,9 +94,8 @@ class OrderFacadeTest {
         // Given
         Long userId = 1L;
         Long issuedCouponId = 1L;
-        List<OrderProductCommand> productCommands = List.of(
-                new OrderProductCommand(1L, 2)
-        );
+        OrderProductCommand productCommand = new OrderProductCommand(1L, 1);
+        List<OrderProductCommand> productCommands = List.of(productCommand);
         OrderPaymentCommand paymentCommand = new OrderPaymentCommand(2000, 1000, 1000);
         UseBalanceCommand useBalanceCommand = new UseBalanceCommand(userId, 1000);
         List<UseCouponCommand> useCouponCommands = List.of(
@@ -133,13 +131,12 @@ class OrderFacadeTest {
     void 주문_생성_실패_재고_부족() {
         // Given
         Long userId = 1L;
-        List<OrderProductCommand> productCommands = List.of(
-                new OrderProductCommand(1L, 2)
-        );
+        OrderProductCommand productCommand = new OrderProductCommand(1L, 1);
+        List<OrderProductCommand> productCommands = List.of(productCommand);
         OrderPaymentCommand paymentCommand = new OrderPaymentCommand(2000, 0, 2000);
         UseBalanceCommand useBalanceCommand = new UseBalanceCommand(userId, 2000);
         List<UseCouponCommand> useCouponCommands = List.of();
-        
+
         OrderCommand orderCommand = new OrderCommand(
                 productCommands,
                 paymentCommand,
@@ -168,9 +165,8 @@ class OrderFacadeTest {
     void 주문_생성_실패_잔액_부족() {
         // Given
         Long userId = 1L;
-        List<OrderProductCommand> productCommands = List.of(
-                new OrderProductCommand(1L, 2)
-        );
+        OrderProductCommand productCommand = new OrderProductCommand(1L, 1);
+        List<OrderProductCommand> productCommands = List.of(productCommand);
         OrderPaymentCommand paymentCommand = new OrderPaymentCommand(2000, 0, 2000);
         UseBalanceCommand useBalanceCommand = new UseBalanceCommand(userId, 2000);
         List<UseCouponCommand> useCouponCommands = List.of();
