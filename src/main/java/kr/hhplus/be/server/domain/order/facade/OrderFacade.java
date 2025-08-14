@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.order.facade;
 
-import kr.hhplus.be.server.aop.lock.DistributedLock;
+import kr.hhplus.be.server.aop.lock.MultiDistributedLock;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
 import kr.hhplus.be.server.domain.dataPlatform.service.DataPlatformService;
@@ -19,7 +19,10 @@ public class OrderFacade {
     private final DataPlatformService dataPlatformService;
     private final IssuedCouponService issuedCouponService;
 
-    @DistributedLock(key = "'ORDER::' + #orderCommand.getDistributedLockKey()")
+    @MultiDistributedLock(
+        keyPrefix = "ORDER",
+        keyExpression = "#orderCommand.getProductIds()"
+    )
     public void createOrder(Long userId, OrderCommand orderCommand) {
         orderService.createOrder(userId, orderCommand);
         productService.decreaseStock(orderCommand.productCommandList());

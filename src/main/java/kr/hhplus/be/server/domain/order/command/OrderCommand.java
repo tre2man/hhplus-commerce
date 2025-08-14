@@ -16,13 +16,11 @@ public record OrderCommand(
             .toList();
     }
 
-    public String getDistributedLockKey() {
+    public List<Long> getProductIds() {
         return productCommandList.stream()
             .map(OrderProductCommand::productId)
             .sorted()
-            .map(String::valueOf)
-            .reduce((first, second) -> first + "," + second)
-            .orElse("");
+            .toList();
     }
 }
 
