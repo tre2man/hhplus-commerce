@@ -1,5 +1,8 @@
 package kr.hhplus.be.server.domain.product.service;
 
+import kr.hhplus.be.server.config.cache.CacheNames;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.repository.ProductRepository;
@@ -15,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final CacheManager cacheManager;
 
     public Optional<ProductVo> findProductById(Long productId) {
         Optional<Product> product = this.productRepository.findById(productId);
@@ -49,6 +53,11 @@ public class ProductService {
             Integer quantity = orderProductCommand.quantity();
             product.decreaseStock(quantity);
             this.productRepository.save(product);
+            // 캐시 무효화
+            Cache cache = this.cacheManager.getCache(CacheNames.PRODUCT_INFO);
+            if (cache != null) {
+                cache.evict(productId);
+            }
         }
     }
 }

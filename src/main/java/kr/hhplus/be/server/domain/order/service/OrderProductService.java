@@ -4,6 +4,7 @@ import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
 import kr.hhplus.be.server.domain.order.entity.OrderProduct;
 import kr.hhplus.be.server.domain.order.repository.OrderProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderProductService {
     private final OrderProductRepository orderProductRepository;
 
