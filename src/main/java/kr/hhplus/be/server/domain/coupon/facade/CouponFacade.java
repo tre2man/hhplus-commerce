@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.facade;
 
-import kr.hhplus.be.server.aop.lock.DistributedLock;
+import kr.hhplus.be.server.aop.lock.MultiDistributedLock;
 import kr.hhplus.be.server.domain.coupon.command.CreateIssuedCouponCommand;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
@@ -16,7 +16,7 @@ public class CouponFacade {
     private final CouponService couponService;
     private final IssuedCouponService issuedCouponService;
 
-    @DistributedLock(key = "'COUPON::' + #userId")
+    @MultiDistributedLock(keyPrefix = "COUPON", keyExpression= "#userId")
     public void issueCoupon(Long userId, Long couponId) {
         couponService.issueCoupon(couponId);
         Integer expireDay = couponService.getCouponExpireDay(couponId);

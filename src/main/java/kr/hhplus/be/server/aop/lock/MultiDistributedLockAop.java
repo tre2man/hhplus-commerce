@@ -75,12 +75,12 @@ public class MultiDistributedLockAop {
         if (!prefix.isEmpty()) {
             keys = keys.stream()
                 .map(key -> prefix + "::" + key)
-                .collect(Collectors.toList());
+                .toList();
         }
         
         return keys;
     }
-    
+
     private void releaseAllLocks(List<RLock> locks) {
         for (RLock lock : locks) {
             try {
