@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.order.command;
 
+import kr.hhplus.be.server.domain.dataplatform.command.CreateOrderDataCommand;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -16,10 +18,20 @@ public record OrderCommand(
             .toList();
     }
 
+    // MultiDistributedLock 에서 사용중
     public List<Long> getProductIds() {
         return productCommandList.stream()
             .map(OrderProductCommand::productId)
             .sorted()
+            .toList();
+    }
+
+    public List<CreateOrderDataCommand> toCreateOrderDataCommandList() {
+        return productCommandList.stream()
+            .map(productCommand -> new CreateOrderDataCommand(
+                productCommand.productId(),
+                productCommand.quantity()
+            ))
             .toList();
     }
 }
