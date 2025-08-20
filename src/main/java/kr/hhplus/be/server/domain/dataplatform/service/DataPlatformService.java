@@ -1,0 +1,59 @@
+package kr.hhplus.be.server.domain.dataplatform.service;
+
+import kr.hhplus.be.server.domain.dataplatform.command.CreateOrderDataCommand;
+import kr.hhplus.be.server.domain.dataplatform.entity.OrderRank;
+import kr.hhplus.be.server.domain.dataplatform.repository.OrderRankDataRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+@RequiredArgsConstructor
+public class DataPlatformService {
+    private final OrderRankDataRepository orderRankDataRepository;
+
+    public void sendOrderData(List<CreateOrderDataCommand> orderDataCommands) {
+        for( CreateOrderDataCommand command : orderDataCommands) {
+            orderRankDataRepository.incrementDailyCount(
+                command.productId(),
+                command.orderCount()
+            );
+        }
+    }
+
+    /**
+     * 1. 오늘을 포함한 n일 전까지의 데이터를 조회합니다.
+     * 2. n 일간의 주문 데이터를 기반으로 상위 n개의 상품을 계산합니다.
+     * 3. 상위 n개의 상품을 Redis에 저장합니다.
+     */
+    public void updateTopNOrderProducts(int n) {
+        LocalDateTime today = LocalDateTime.now();
+
+        Map<Long, Integer> aggregated = new HashMap<>();
+        for (int i = 0; i <= n; i++) {
+            LocalDateTime date = today.minusDays(i);
+            List<OrderRank> dailyRanks = orderRankDataRepository.getTopN(date, n);
+            for (OrderRank rank : dailyRanks) {
+                aggregated.merge(rank.productId(), rank.score(), Integer::sum);
+            }
+        }
+
+        List<OrderRank> topN = aggregated.entrySet().stream()
+            .map(entry -> new OrderRank(entry.getKey(), entry.getValue()))
+            .limit(n)
+            .toList();
+
+        orderRankDataRepository.saveTopN(n, topN);
+    }
+
+    /**
+     * 현재 주문건수 상위 n개의 상품을 조회합니다.
+     */
+    public List<OrderRank> getTopNOrderProducts(int n) {
+        return orderRankDataRepository.getTopNOrderProducts(n);
+    }
+}

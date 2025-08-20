@@ -1,7 +1,9 @@
 package kr.hhplus.be.server.domain.product.facade;
 
 import kr.hhplus.be.server.config.cache.CacheNames;
-import kr.hhplus.be.server.domain.order.service.OrderProductService;
+import kr.hhplus.be.server.domain.dataplatform.entity.OrderRank;
+import kr.hhplus.be.server.domain.dataplatform.service.DataPlatformService;
+import kr.hhplus.be.server.domain.product.dto.GetPopularProductResponse;
 import kr.hhplus.be.server.domain.product.dto.GetProductResponse;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import kr.hhplus.be.server.domain.product.vo.ProductVo;
@@ -11,14 +13,16 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class ProductFacade {
     private final ProductService productService;
-    private final OrderProductService orderProductService;
+    private final DataPlatformService dataPlatformService;
 
     public List<GetProductResponse> getAllProduct() {
         return productService.getAllProducts()
@@ -39,14 +43,21 @@ public class ProductFacade {
     }
 
     /**
-     * 3일 내 주문량이 가장 많은 상품 5개를 조회합니다.
+     * 3일 내 주문량이 가장 많은 상품 n개를 조회합니다.
      */
-    @Cacheable(value = CacheNames.POPULAR_PRODUCTS, key = "")
-    public List<GetProductResponse> getPopularProducts() {
-        List<Long> productIdList = orderProductService.getPopular5ProductIds();
-        return productService.getProductsByIds(productIdList)
-                .stream()
-                .map(GetProductResponse::of)
+    public List<GetPopularProductResponse> getPopularProducts() {
+        List<OrderRank> orderRankList = dataPlatformService.getTopNOrderProducts(5);
+        Map<Long, Integer> productRankMap = orderRankList.stream()
+                .collect(Collectors.toMap(OrderRank::productId, OrderRank::score));
+        List<Long> productIdList = orderRankList.stream()
+                .map(OrderRank::productId)
+                .toList();
+        List<ProductVo> productVoList = productService.getProductsByIds(productIdList);
+        return productVoList.stream()
+                .map(productVo -> {
+                    Integer score = productRankMap.get(productVo.getId());
+                    return GetPopularProductResponse.of(productVo, score != null ? score : 0);
+                })
                 .toList();
     }
 }
