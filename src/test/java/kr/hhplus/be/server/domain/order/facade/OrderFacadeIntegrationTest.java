@@ -44,9 +44,6 @@ class OrderFacadeIntegrationTest {
     private OrderProductRepository orderProductRepository;
 
     @Autowired
-    private IssuedCouponService issuedCouponService;
-
-    @Autowired
     private IssuedCouponRepository issuedCouponRepository;
 
     @Autowired
