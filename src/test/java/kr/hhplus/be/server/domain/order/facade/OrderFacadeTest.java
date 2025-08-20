@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.order.facade;
 
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
-import kr.hhplus.be.server.domain.dataPlatform.service.DataPlatformService;
+import kr.hhplus.be.server.domain.dataplatform.service.DataPlatformService;
 import kr.hhplus.be.server.domain.order.command.OrderCommand;
 import kr.hhplus.be.server.domain.order.command.OrderPaymentCommand;
 import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
@@ -75,7 +75,7 @@ class OrderFacadeTest {
         doNothing().when(productService).decreaseStock(productCommands);
         doNothing().when(balanceService).useBalance(useBalanceCommand);
         doNothing().when(issuedCouponService).useCoupon(useCouponCommands);
-        doNothing().when(dataPlatformService).sendOrderData();
+        doNothing().when(dataPlatformService).sendOrderData(orderCommand.toCreateOrderDataCommandList());
 
         // When
         orderFacade.createOrder(userId, orderCommand);
@@ -85,7 +85,7 @@ class OrderFacadeTest {
         verify(productService).decreaseStock(productCommands);
         verify(balanceService).useBalance(useBalanceCommand);
         verify(issuedCouponService).useCoupon(useCouponCommands);
-        verify(dataPlatformService).sendOrderData();
+        verify(dataPlatformService).sendOrderData(orderCommand.toCreateOrderDataCommandList());
     }
 
     @Test
@@ -113,7 +113,7 @@ class OrderFacadeTest {
         doNothing().when(productService).decreaseStock(productCommands);
         doNothing().when(balanceService).useBalance(useBalanceCommand);
         doNothing().when(issuedCouponService).useCoupon(useCouponCommands);
-        doNothing().when(dataPlatformService).sendOrderData();
+        doNothing().when(dataPlatformService).sendOrderData(orderCommand.toCreateOrderDataCommandList());
 
         // When
         orderFacade.createOrder(userId, orderCommand);
@@ -123,7 +123,7 @@ class OrderFacadeTest {
         verify(productService).decreaseStock(productCommands);
         verify(balanceService).useBalance(useBalanceCommand);
         verify(issuedCouponService).useCoupon(useCouponCommands);
-        verify(dataPlatformService).sendOrderData();
+        verify(dataPlatformService).sendOrderData(orderCommand.toCreateOrderDataCommandList());
     }
 
     @Test
@@ -157,7 +157,7 @@ class OrderFacadeTest {
         verify(productService).decreaseStock(productCommands);
         verify(balanceService, never()).useBalance(any());
         verify(issuedCouponService, never()).useCoupon(any());
-        verify(dataPlatformService, never()).sendOrderData();
+        verify(dataPlatformService, never()).sendOrderData(orderCommand.toCreateOrderDataCommandList());
     }
 
     @Test
@@ -192,6 +192,6 @@ class OrderFacadeTest {
         verify(productService).decreaseStock(productCommands);
         verify(balanceService).useBalance(useBalanceCommand);
         verify(issuedCouponService, never()).useCoupon(any());
-        verify(dataPlatformService, never()).sendOrderData();
+        verify(dataPlatformService, never()).sendOrderData(orderCommand.toCreateOrderDataCommandList());
     }
 }
