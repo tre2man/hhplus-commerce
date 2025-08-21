@@ -58,10 +58,11 @@ public class Coupon {
         return new Coupon(name, discountAmount, totalQuantity, expireDay);
     }
 
-    public void issue() {
-        if (issuedQuantity >= totalQuantity) {
+
+    public void issue(Integer count) {
+        if (issuedQuantity + count > totalQuantity) {
             throw new IllegalStateException("쿠폰 발급 가능 수량을 초과했습니다.");
         }
-        issuedQuantity++;
+        issuedQuantity += count;
     }
 }

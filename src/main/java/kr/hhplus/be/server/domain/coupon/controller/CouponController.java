@@ -24,7 +24,7 @@ public class CouponController {
     public ResponseEntity<Void> issueCoupon(
             @RequestBody IssueCouponRequest issueCouponRequest
     ) {
-        couponFacade.issueCoupon(issueCouponRequest.getUserId(), issueCouponRequest.getCouponId());
+        couponFacade.addIssueRequest(issueCouponRequest.getUserId(), issueCouponRequest.getCouponId());
         return ResponseEntity.status(201).build();
     }
 
