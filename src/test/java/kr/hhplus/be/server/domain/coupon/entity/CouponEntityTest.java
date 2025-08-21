@@ -38,7 +38,7 @@ class CouponEntityTest {
         Coupon coupon = Coupon.create(name, discountAmount, totalQuantity, expireDay);
 
         // When
-        coupon.issue();
+        coupon.issue(1);
 
         // Then
         assertThat(coupon.getIssuedQuantity()).isEqualTo(1);
@@ -56,7 +56,8 @@ class CouponEntityTest {
         Coupon coupon = Coupon.create(name, discountAmount, totalQuantity, expireDay);
 
         // When, Then
-        assertThatThrownBy(coupon::issue)
-                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> {
+            coupon.issue(1);
+        }).isInstanceOf(IllegalStateException.class);
     }
 }

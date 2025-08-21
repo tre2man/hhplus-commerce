@@ -60,7 +60,7 @@ class CouponServiceConcurrencyTest {
                 try {
                     readyLatch.countDown();
                     startLatch.await();
-                    couponService.issueCoupon(couponId);
+                    couponService.issueCoupon(couponId, 1);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 } finally {
@@ -75,10 +75,9 @@ class CouponServiceConcurrencyTest {
         executor.shutdown();
 
         // Then
-        Integer totalIssuedQuantity = threads;
         Coupon updatedCoupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
-        assertThat(updatedCoupon.getIssuedQuantity()).isEqualTo(totalIssuedQuantity);
+        assertThat(updatedCoupon.getIssuedQuantity()).isEqualTo(threads);
     }
 
     @DisplayName("[성공] 쿠폰 발급 횟수 차감이 동시에 실행될 시 최대 발급 가능 수량만큼만 발급이 되어야 한다.")
@@ -109,7 +108,7 @@ class CouponServiceConcurrencyTest {
                 try {
                     readyLatch.countDown();
                     startLatch.await();
-                    couponService.issueCoupon(couponId);
+                    couponService.issueCoupon(couponId, 1);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }  finally {
