@@ -1,8 +1,9 @@
 package kr.hhplus.be.server.domain.dataplatform.service;
 
 import kr.hhplus.be.server.domain.dataplatform.command.CreateOrderDataCommand;
-import kr.hhplus.be.server.domain.dataplatform.entity.OrderRank;
+import kr.hhplus.be.server.domain.dataplatform.entity.OrderRankProduct;
 import kr.hhplus.be.server.domain.dataplatform.repository.OrderRankDataRepository;
+import kr.hhplus.be.server.domain.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,11 +25,17 @@ class DataPlatformServiceIntegrationTest {
     private OrderRankDataRepository orderRankDataRepository;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     @BeforeEach
     void setUp() {
-        dataPlatformService = new DataPlatformService(orderRankDataRepository);
+        dataPlatformService = new DataPlatformService(
+                productService,
+                orderRankDataRepository
+        );
         redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
@@ -47,7 +54,7 @@ class DataPlatformServiceIntegrationTest {
         dataPlatformService.updateTopNOrderProducts(3);
 
         // then
-        List<OrderRank> topNOrderProducts = dataPlatformService.getTopNOrderProducts(3);
+        List<OrderRankProduct> topNOrderProducts = dataPlatformService.getTopNOrderProducts(3);
         assertThat(topNOrderProducts).isNotNull();
         assertThat(topNOrderProducts.size()).isEqualTo(3);
         assertThat(topNOrderProducts.get(0).productId()).isEqualTo(3L);
@@ -72,7 +79,7 @@ class DataPlatformServiceIntegrationTest {
         dataPlatformService.sendOrderData(orderDataCommands);
 
         // then
-        List<OrderRank> topNOrderProducts = dataPlatformService.getTopNOrderProducts(3);
+        List<OrderRankProduct> topNOrderProducts = dataPlatformService.getTopNOrderProducts(3);
         assertThat(topNOrderProducts).isNotNull();
         assertThat(topNOrderProducts.size()).isEqualTo(0);
     }

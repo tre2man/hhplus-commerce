@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.product.facade;
 
 import kr.hhplus.be.server.config.cache.CacheNames;
-import kr.hhplus.be.server.domain.dataplatform.entity.OrderRank;
+import kr.hhplus.be.server.domain.dataplatform.entity.OrderRankProduct;
 import kr.hhplus.be.server.domain.dataplatform.service.DataPlatformService;
 import kr.hhplus.be.server.domain.product.dto.GetPopularProductResponse;
 import kr.hhplus.be.server.domain.product.dto.GetProductResponse;
@@ -13,9 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -46,18 +44,16 @@ public class ProductFacade {
      * 3일 내 주문량이 가장 많은 상품 n개를 조회합니다.
      */
     public List<GetPopularProductResponse> getPopularProducts() {
-        List<OrderRank> orderRankList = dataPlatformService.getTopNOrderProducts(5);
-        Map<Long, Integer> productRankMap = orderRankList.stream()
-                .collect(Collectors.toMap(OrderRank::productId, OrderRank::score));
-        List<Long> productIdList = orderRankList.stream()
-                .map(OrderRank::productId)
-                .toList();
-        List<ProductVo> productVoList = productService.getProductsByIds(productIdList);
-        return productVoList.stream()
-                .map(productVo -> {
-                    Integer score = productRankMap.get(productVo.getId());
-                    return GetPopularProductResponse.of(productVo, score != null ? score : 0);
-                })
+        List<OrderRankProduct> orderRankProductList = dataPlatformService.getTopNOrderProducts(5);
+        return orderRankProductList.stream()
+                .map(orderRankProduct ->
+                    GetPopularProductResponse.of(
+                            orderRankProduct.productId(),
+                            orderRankProduct.name(),
+                            orderRankProduct.price(),
+                            orderRankProduct.score()
+                    )
+                )
                 .toList();
     }
 }

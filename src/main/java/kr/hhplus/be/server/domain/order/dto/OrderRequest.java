@@ -29,7 +29,7 @@ public class OrderRequest {
                 products.stream().map(OrderProductRequest::toCommand).toList(),
                 payment.toCommand(),
                 useBalance != null ? useBalance.toCommand() : null,
-                useCoupons != null ? useCoupons.stream().map(OrderUseCouponRequest::toCommand).toList() : null
+                useCoupons != null ? useCoupons.stream().map(OrderUseCouponRequest::toCommand).toList() : List.of()
         );
     }
 }
