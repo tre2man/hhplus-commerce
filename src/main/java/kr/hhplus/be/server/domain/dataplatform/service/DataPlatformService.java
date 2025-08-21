@@ -2,7 +2,10 @@ package kr.hhplus.be.server.domain.dataplatform.service;
 
 import kr.hhplus.be.server.domain.dataplatform.command.CreateOrderDataCommand;
 import kr.hhplus.be.server.domain.dataplatform.entity.OrderRank;
+import kr.hhplus.be.server.domain.dataplatform.entity.OrderRankProduct;
 import kr.hhplus.be.server.domain.dataplatform.repository.OrderRankDataRepository;
+import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.domain.product.vo.ProductVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class DataPlatformService {
+    private final ProductService productService;
     private final OrderRankDataRepository orderRankDataRepository;
 
     public void sendOrderData(List<CreateOrderDataCommand> orderDataCommands) {
@@ -42,8 +46,23 @@ public class DataPlatformService {
             }
         }
 
-        List<OrderRank> topN = aggregated.entrySet().stream()
-            .map(entry -> new OrderRank(entry.getKey(), entry.getValue()))
+        List<ProductVo> products = productService.getProductsByIds(
+            aggregated.keySet().stream().toList()
+        );
+        List<OrderRankProduct> topN = aggregated.entrySet().stream()
+            .map(entry -> {
+                ProductVo product = products.stream()
+                    .filter(p -> p.getId().equals(entry.getKey()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. productId: " + entry.getKey()));
+                return new OrderRankProduct(
+                        entry.getKey(),
+                        product.getName(),
+                        product.getPrice(),
+                        entry.getValue()
+                );
+            })
+            .sorted((a, b) -> Integer.compare(b.score(), a.score()))
             .limit(n)
             .toList();
 
@@ -53,7 +72,7 @@ public class DataPlatformService {
     /**
      * 현재 주문건수 상위 n개의 상품을 조회합니다.
      */
-    public List<OrderRank> getTopNOrderProducts(int n) {
+    public List<OrderRankProduct> getTopNOrderProducts(int n) {
         return orderRankDataRepository.getTopNOrderProducts(n);
     }
 }

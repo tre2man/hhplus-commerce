@@ -3,6 +3,7 @@ package kr.hhplus.be.server.domain.dataplatform.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.domain.dataplatform.entity.OrderRank;
+import kr.hhplus.be.server.domain.dataplatform.entity.OrderRankProduct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -50,26 +51,22 @@ public class OrderRankDataRepository  {
     }
 
     // 주문건수 상위 n개의 정보를 저장합니다.
-    public void saveTopN(int n, List<OrderRank> orderRanks) {
+    public void saveTopN(int n, List<OrderRankProduct> orderRankProducts) {
         String key = cacheKeyTopN(n);
-        redisTemplate.opsForValue().set(key, orderRanks, Duration.ofDays(1)); // set + TTL
+        redisTemplate.opsForValue().set(key, orderRankProducts, Duration.ofDays(1)); // set + TTL
     }
 
 
     // 현재 주문건수 상위 n개의 정보를 조회합니다.
-    public List<OrderRank> getTopNOrderProducts(int n) {
+    public List<OrderRankProduct> getTopNOrderProducts(int n) {
         String key = cacheKeyTopN(n);
         Object raw = redisTemplate.opsForValue().get(key);
         if (raw == null) {
             return List.of();
-        };
-
-        List<OrderRank> orderRanks = objectMapper.convertValue(
+        }
+        return objectMapper.convertValue(
                 raw,
                 new TypeReference<>() {}
         );
-        return orderRanks.stream()
-                .sorted((o1, o2) -> Integer.compare(o2.score(), o1.score()))
-                .toList();
     }
 }
