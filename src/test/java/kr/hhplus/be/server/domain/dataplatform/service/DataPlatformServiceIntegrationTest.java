@@ -3,6 +3,8 @@ package kr.hhplus.be.server.domain.dataplatform.service;
 import kr.hhplus.be.server.domain.dataplatform.command.CreateOrderDataCommand;
 import kr.hhplus.be.server.domain.dataplatform.entity.OrderRankProduct;
 import kr.hhplus.be.server.domain.dataplatform.repository.OrderRankDataRepository;
+import kr.hhplus.be.server.domain.product.entity.Product;
+import kr.hhplus.be.server.domain.product.repository.ProductRepository;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +30,9 @@ class DataPlatformServiceIntegrationTest {
     private ProductService productService;
 
     @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     @BeforeEach
@@ -43,6 +48,12 @@ class DataPlatformServiceIntegrationTest {
     @Test
     void 성공_인기상품_조회() {
         // given
+        List<Product> products = List.of(
+            Product.create("상품 1", 100, 1000, "상품 1 설명"),
+            Product.create("상품 2", 200, 2000, "상품 2 설명"),
+            Product.create("상품 3", 300, 3000, "상품 3 설명")
+        );
+        productRepository.saveAll(products);
         List<CreateOrderDataCommand> orderDataCommands = List.of(
             new CreateOrderDataCommand(1L, 10),
             new CreateOrderDataCommand(2L, 20),
@@ -69,6 +80,12 @@ class DataPlatformServiceIntegrationTest {
     @Test
     void 실패_인기상품_업데이트() {
         // given
+        List<Product> products = List.of(
+                Product.create("상품 1", 100, 1000, "상품 1 설명"),
+                Product.create("상품 2", 200, 2000, "상품 2 설명"),
+                Product.create("상품 3", 300, 3000, "상품 3 설명")
+        );
+        productRepository.saveAll(products);
         List<CreateOrderDataCommand> orderDataCommands = List.of(
                 new CreateOrderDataCommand(1L, 10),
                 new CreateOrderDataCommand(2L, 20),

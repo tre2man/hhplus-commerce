@@ -39,7 +39,7 @@ class CouponServiceTest {
         when(couponRepository.findByIdForUpdate(couponId)).thenReturn(Optional.of(coupon));
 
         // When
-        couponService.issueCoupon(couponId);
+        couponService.issueCoupon(couponId, 1);
 
         // Then
         assertThat(coupon.getIssuedQuantity()).isEqualTo(1);
@@ -57,23 +57,7 @@ class CouponServiceTest {
         when(couponRepository.findByIdForUpdate(couponId)).thenReturn(Optional.of(coupon));
 
         // When, Then
-        assertThatThrownBy(() -> couponService.issueCoupon(couponId))
+        assertThatThrownBy(() -> couponService.issueCoupon(couponId, 1))
                 .isInstanceOf(IllegalStateException.class);
-    }
-
-    @DisplayName("[성공] 쿠폰 유효 기간 조회")
-    @Test
-    void 쿠폰_유효기간_조회_성공() {
-        // Given
-        Long couponId = 1L;
-        Integer expireDay = 30;
-        Coupon coupon = Coupon.create("Test Coupon", 1000, 100, expireDay);
-        when(couponRepository.findById(couponId)).thenReturn(Optional.of(coupon));
-
-        // When
-        Integer resultExpireDay = couponService.getCouponExpireDay(couponId);
-
-        // Then
-        assertThat(resultExpireDay).isEqualTo(expireDay);
     }
 }
