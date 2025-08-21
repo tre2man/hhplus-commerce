@@ -15,6 +15,9 @@ spring:
       host: localhost
       port: 6379
       timeout: 2000ms
+  task:
+    scheduling:
+      enabled: false
 
 
 logging:
