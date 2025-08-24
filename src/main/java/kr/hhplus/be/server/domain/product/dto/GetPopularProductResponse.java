@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.product.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import kr.hhplus.be.server.domain.product.vo.ProductRankVo;
 import lombok.Getter;
 
 @Schema(description = "인기 상품 정보 조회")
@@ -30,17 +31,12 @@ public class GetPopularProductResponse {
         this.orderCount = orderCount;
     }
 
-     public static GetPopularProductResponse of(
-            Long id,
-            String name,
-            Integer price,
-            Integer orderCount
-    ) {
+     public static GetPopularProductResponse of(ProductRankVo productRankVo) {
          return new GetPopularProductResponse(
-                id,
-                name,
-                price,
-                orderCount
+                    productRankVo.getId(),
+                    productRankVo.getName(),
+                    productRankVo.getPrice(),
+                    productRankVo.getOrderCount()
          );
      }
 }
