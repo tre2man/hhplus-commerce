@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.dataplatform.command;
 
-public record CreateOrderDataCommand (
+public record IncrementDailyCountCommand(
     Long productId,
-    Integer orderCount
+    Integer count
 ) {
 }

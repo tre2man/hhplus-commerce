@@ -1,11 +1,12 @@
 package kr.hhplus.be.server.domain.dataplatform.service;
 
-import kr.hhplus.be.server.domain.dataplatform.command.CreateOrderDataCommand;
+import kr.hhplus.be.server.domain.dataplatform.command.sendOrderDataCommand;
 import kr.hhplus.be.server.domain.dataplatform.entity.OrderRankProduct;
 import kr.hhplus.be.server.domain.dataplatform.repository.OrderRankDataRepository;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.repository.ProductRepository;
 import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.domain.product.vo.ProductRankVo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,10 +55,10 @@ class DataPlatformServiceIntegrationTest {
             Product.create("상품 3", 300, 3000, "상품 3 설명")
         );
         productRepository.saveAll(products);
-        List<CreateOrderDataCommand> orderDataCommands = List.of(
-            new CreateOrderDataCommand(1L, 10),
-            new CreateOrderDataCommand(2L, 20),
-            new CreateOrderDataCommand(3L, 30)
+        List<sendOrderDataCommand> orderDataCommands = List.of(
+            new sendOrderDataCommand(1L, 10),
+            new sendOrderDataCommand(2L, 20),
+            new sendOrderDataCommand(3L, 30)
         );
 
         // when
@@ -65,15 +66,15 @@ class DataPlatformServiceIntegrationTest {
         dataPlatformService.updateTopNOrderProducts(3);
 
         // then
-        List<OrderRankProduct> topNOrderProducts = dataPlatformService.getTopNOrderProducts(3);
+        List<ProductRankVo> topNOrderProducts = dataPlatformService.getTopNOrderProducts(3);
         assertThat(topNOrderProducts).isNotNull();
         assertThat(topNOrderProducts.size()).isEqualTo(3);
-        assertThat(topNOrderProducts.get(0).productId()).isEqualTo(3L);
-        assertThat(topNOrderProducts.get(1).productId()).isEqualTo(2L);
-        assertThat(topNOrderProducts.get(2).productId()).isEqualTo(1L);
-        assertThat(topNOrderProducts.get(0).score()).isEqualTo(30);
-        assertThat(topNOrderProducts.get(1).score()).isEqualTo(20);
-        assertThat(topNOrderProducts.get(2).score()).isEqualTo(10);
+        assertThat(topNOrderProducts.get(0).getId()).isEqualTo(3L);
+        assertThat(topNOrderProducts.get(1).getId()).isEqualTo(2L);
+        assertThat(topNOrderProducts.get(2).getId()).isEqualTo(1L);
+        assertThat(topNOrderProducts.get(0).getOrderCount()).isEqualTo(30);
+        assertThat(topNOrderProducts.get(1).getOrderCount()).isEqualTo(20);
+        assertThat(topNOrderProducts.get(2).getOrderCount()).isEqualTo(10);
     }
 
     @DisplayName("[실패] 인기상품 업데이트 실패")
@@ -86,17 +87,17 @@ class DataPlatformServiceIntegrationTest {
                 Product.create("상품 3", 300, 3000, "상품 3 설명")
         );
         productRepository.saveAll(products);
-        List<CreateOrderDataCommand> orderDataCommands = List.of(
-                new CreateOrderDataCommand(1L, 10),
-                new CreateOrderDataCommand(2L, 20),
-                new CreateOrderDataCommand(3L, 30)
+        List<sendOrderDataCommand> orderDataCommands = List.of(
+                new sendOrderDataCommand(1L, 10),
+                new sendOrderDataCommand(2L, 20),
+                new sendOrderDataCommand(3L, 30)
         );
 
         // when
         dataPlatformService.sendOrderData(orderDataCommands);
 
         // then
-        List<OrderRankProduct> topNOrderProducts = dataPlatformService.getTopNOrderProducts(3);
+        List<ProductRankVo> topNOrderProducts = dataPlatformService.getTopNOrderProducts(3);
         assertThat(topNOrderProducts).isNotNull();
         assertThat(topNOrderProducts.size()).isEqualTo(0);
     }

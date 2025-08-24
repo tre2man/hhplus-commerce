@@ -3,6 +3,9 @@ package kr.hhplus.be.server.domain.dataplatform.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.config.cache.CacheNames;
+import kr.hhplus.be.server.domain.dataplatform.command.GetTopNCommand;
+import kr.hhplus.be.server.domain.dataplatform.command.IncrementDailyCountCommand;
+import kr.hhplus.be.server.domain.dataplatform.command.SaveTopNCommand;
 import kr.hhplus.be.server.domain.dataplatform.entity.OrderRank;
 import kr.hhplus.be.server.domain.dataplatform.entity.OrderRankProduct;
 import lombok.RequiredArgsConstructor;
@@ -32,17 +35,20 @@ public class OrderRankDataRepository  {
         return CacheNames.RANK_ORDER_RESULT + ":" + n;
     }
 
-    public void incrementDailyCount(Long productId, Integer count) {
+    public void incrementDailyCount(IncrementDailyCountCommand command) {
         String key = dayKey(LocalDateTime.now(KST));
-        redisTemplate.opsForZSet().incrementScore(key, String.valueOf(productId), count);
+        redisTemplate.opsForZSet().incrementScore(key, String.valueOf(command.productId()), command.count());
         redisTemplate.expire(key, Duration.ofDays(CacheNames.RANK_ORDER_DAY_EXPIRATION_MIN));
     }
 
-    // 특정 날짜의 상위 n개의 데이터를 반환합니다.
-    public List<OrderRank> getTopN(LocalDateTime d, int n) {
-        String key = dayKey(d);
+    /**
+     * 특정 날짜의 상위 n개의 데이터를 반환합니다.
+     * TODO: 비즈니스 로직 분리 필요
+     */
+    public List<OrderRank> getTopN(GetTopNCommand command) {
+        String key = dayKey(command.date());
         return Objects.requireNonNull(Objects.requireNonNull(redisTemplate.opsForZSet()
-                .reverseRangeWithScores(key, 0, n - 1))
+                .reverseRangeWithScores(key, 0, command.day() - 1))
                 .stream()
                 .map(entry -> new OrderRank(
                         Long.parseLong((String) Objects.requireNonNull(entry.getValue())),
@@ -52,15 +58,15 @@ public class OrderRankDataRepository  {
     }
 
     // 주문건수 상위 n개의 정보를 저장합니다.
-    public void saveTopN(int n, List<OrderRankProduct> orderRankProducts) {
-        String key = cacheKeyTopN(n);
-        redisTemplate.opsForValue().set(key, orderRankProducts, Duration.ofDays(CacheNames.RANK_ORDER_RESULT_EXPIRATION_MIN));
+    public void saveTopN(SaveTopNCommand command) {
+        String key = cacheKeyTopN(command.days());
+        redisTemplate.opsForValue().set(key, command.orderRankProducts(), Duration.ofDays(CacheNames.RANK_ORDER_RESULT_EXPIRATION_MIN));
     }
 
 
     // 현재 주문건수 상위 n개의 정보를 조회합니다.
-    public List<OrderRankProduct> getTopNOrderProducts(int n) {
-        String key = cacheKeyTopN(n);
+    public List<OrderRankProduct> getTopNOrderProducts(int days) {
+        String key = cacheKeyTopN(days);
         Object raw = redisTemplate.opsForValue().get(key);
         if (raw == null) {
             return List.of();
