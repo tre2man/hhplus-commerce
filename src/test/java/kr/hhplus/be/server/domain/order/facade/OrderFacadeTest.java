@@ -2,7 +2,6 @@ package kr.hhplus.be.server.domain.order.facade;
 
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
-import kr.hhplus.be.server.domain.dataplatform.service.DataPlatformService;
 import kr.hhplus.be.server.domain.order.command.OrderCommand;
 import kr.hhplus.be.server.domain.order.command.OrderPaymentCommand;
 import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
@@ -10,6 +9,8 @@ import kr.hhplus.be.server.domain.order.command.UseBalanceCommand;
 import kr.hhplus.be.server.domain.order.command.UseCouponCommand;
 import kr.hhplus.be.server.domain.order.service.OrderService;
 import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.event.event.OrderDataEvent;
+import kr.hhplus.be.server.event.publisher.OrderDataPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,10 +38,10 @@ class OrderFacadeTest {
     private BalanceService balanceService;
 
     @Mock
-    private DataPlatformService dataPlatformService;
+    private IssuedCouponService issuedCouponService;
 
     @Mock
-    private IssuedCouponService issuedCouponService;
+    private OrderDataPublisher orderDataPublisher;
 
     @BeforeEach
     void setUp() {
@@ -48,8 +49,8 @@ class OrderFacadeTest {
                 orderService,
                 productService,
                 balanceService,
-                dataPlatformService,
-                issuedCouponService
+                issuedCouponService,
+                orderDataPublisher
         );
     }
 
@@ -75,7 +76,7 @@ class OrderFacadeTest {
         doNothing().when(productService).decreaseStock(productCommands);
         doNothing().when(balanceService).useBalance(useBalanceCommand);
         doNothing().when(issuedCouponService).useCoupon(useCouponCommands);
-        doNothing().when(dataPlatformService).sendOrderData(orderCommand.toCreateOrderDataCommandList());
+        doNothing().when(orderDataPublisher).publish(any(OrderDataEvent.class));
 
         // When
         orderFacade.createOrder(userId, orderCommand);
@@ -85,7 +86,7 @@ class OrderFacadeTest {
         verify(productService).decreaseStock(productCommands);
         verify(balanceService).useBalance(useBalanceCommand);
         verify(issuedCouponService).useCoupon(useCouponCommands);
-        verify(dataPlatformService).sendOrderData(orderCommand.toCreateOrderDataCommandList());
+        verify(orderDataPublisher).publish(any(OrderDataEvent.class));
     }
 
     @Test
@@ -113,7 +114,7 @@ class OrderFacadeTest {
         doNothing().when(productService).decreaseStock(productCommands);
         doNothing().when(balanceService).useBalance(useBalanceCommand);
         doNothing().when(issuedCouponService).useCoupon(useCouponCommands);
-        doNothing().when(dataPlatformService).sendOrderData(orderCommand.toCreateOrderDataCommandList());
+        doNothing().when(orderDataPublisher).publish(any(OrderDataEvent.class));
 
         // When
         orderFacade.createOrder(userId, orderCommand);
@@ -123,7 +124,7 @@ class OrderFacadeTest {
         verify(productService).decreaseStock(productCommands);
         verify(balanceService).useBalance(useBalanceCommand);
         verify(issuedCouponService).useCoupon(useCouponCommands);
-        verify(dataPlatformService).sendOrderData(orderCommand.toCreateOrderDataCommandList());
+        verify(orderDataPublisher).publish(any(OrderDataEvent.class));
     }
 
     @Test
@@ -157,7 +158,7 @@ class OrderFacadeTest {
         verify(productService).decreaseStock(productCommands);
         verify(balanceService, never()).useBalance(any());
         verify(issuedCouponService, never()).useCoupon(any());
-        verify(dataPlatformService, never()).sendOrderData(orderCommand.toCreateOrderDataCommandList());
+        verify(orderDataPublisher, never()).publish(any());
     }
 
     @Test
@@ -192,6 +193,6 @@ class OrderFacadeTest {
         verify(productService).decreaseStock(productCommands);
         verify(balanceService).useBalance(useBalanceCommand);
         verify(issuedCouponService, never()).useCoupon(any());
-        verify(dataPlatformService, never()).sendOrderData(orderCommand.toCreateOrderDataCommandList());
+        verify(orderDataPublisher, never()).publish(any());
     }
 }
