@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.dataplatform.command;
 
-public record sendOrderDataCommand(
+public record SendOrderDataCommand(
     Long productId,
     Integer orderCount
 ) {

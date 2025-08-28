@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.dataplatform.service;
 
 import kr.hhplus.be.server.domain.dataplatform.command.GetTopNCommand;
 import kr.hhplus.be.server.domain.dataplatform.command.SaveTopNCommand;
-import kr.hhplus.be.server.domain.dataplatform.command.sendOrderDataCommand;
+import kr.hhplus.be.server.domain.dataplatform.command.SendOrderDataCommand;
 import kr.hhplus.be.server.domain.dataplatform.entity.OrderRank;
 import kr.hhplus.be.server.domain.dataplatform.entity.OrderRankProduct;
 import kr.hhplus.be.server.domain.dataplatform.repository.OrderRankDataRepository;
@@ -23,8 +23,8 @@ public class DataPlatformService {
     private final ProductService productService;
     private final OrderRankDataRepository orderRankDataRepository;
 
-    public void sendOrderData(List<sendOrderDataCommand> orderDataCommands) {
-        for( sendOrderDataCommand command : orderDataCommands) {
+    public void sendOrderData(List<SendOrderDataCommand> orderDataCommands) {
+        for( SendOrderDataCommand command : orderDataCommands) {
             orderRankDataRepository.incrementDailyCount(
                 command.toIncrementDailyCountCommand()
             );
