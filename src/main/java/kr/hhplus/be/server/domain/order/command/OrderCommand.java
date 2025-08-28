@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.order.command;
 
-import kr.hhplus.be.server.domain.dataplatform.command.sendOrderDataCommand;
+import kr.hhplus.be.server.domain.dataplatform.command.SendOrderDataCommand;
 
 import java.util.Comparator;
 import java.util.List;
@@ -26,9 +26,9 @@ public record OrderCommand(
             .toList();
     }
 
-    public List<sendOrderDataCommand> toCreateOrderDataCommandList() {
+    public List<SendOrderDataCommand> toCreateOrderDataCommandList() {
         return productCommandList.stream()
-            .map(productCommand -> new sendOrderDataCommand(
+            .map(productCommand -> new SendOrderDataCommand(
                 productCommand.productId(),
                 productCommand.quantity()
             ))

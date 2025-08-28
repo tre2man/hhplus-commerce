@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.dataplatform.service;
 
-import kr.hhplus.be.server.domain.dataplatform.command.sendOrderDataCommand;
-import kr.hhplus.be.server.domain.dataplatform.entity.OrderRankProduct;
+import kr.hhplus.be.server.domain.dataplatform.command.SendOrderDataCommand;
 import kr.hhplus.be.server.domain.dataplatform.repository.OrderRankDataRepository;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.repository.ProductRepository;
@@ -55,10 +54,10 @@ class DataPlatformServiceIntegrationTest {
             Product.create("상품 3", 300, 3000, "상품 3 설명")
         );
         productRepository.saveAll(products);
-        List<sendOrderDataCommand> orderDataCommands = List.of(
-            new sendOrderDataCommand(1L, 10),
-            new sendOrderDataCommand(2L, 20),
-            new sendOrderDataCommand(3L, 30)
+        List<SendOrderDataCommand> orderDataCommands = List.of(
+            new SendOrderDataCommand(1L, 10),
+            new SendOrderDataCommand(2L, 20),
+            new SendOrderDataCommand(3L, 30)
         );
 
         // when
@@ -87,10 +86,10 @@ class DataPlatformServiceIntegrationTest {
                 Product.create("상품 3", 300, 3000, "상품 3 설명")
         );
         productRepository.saveAll(products);
-        List<sendOrderDataCommand> orderDataCommands = List.of(
-                new sendOrderDataCommand(1L, 10),
-                new sendOrderDataCommand(2L, 20),
-                new sendOrderDataCommand(3L, 30)
+        List<SendOrderDataCommand> orderDataCommands = List.of(
+                new SendOrderDataCommand(1L, 10),
+                new SendOrderDataCommand(2L, 20),
+                new SendOrderDataCommand(3L, 30)
         );
 
         // when
