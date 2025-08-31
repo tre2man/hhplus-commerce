@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.event.listener;
 
 import kr.hhplus.be.server.event.event.BaseEvent;
-import org.springframework.stereotype.Service;
+import org.springframework.context.event.EventListener;
 
-@Service
 public interface AppEventListener<T extends BaseEvent> {
-    void listen(T event);
+    @EventListener
+    void handle(T event);
 }

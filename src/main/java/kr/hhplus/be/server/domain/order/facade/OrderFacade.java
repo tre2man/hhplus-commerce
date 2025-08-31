@@ -6,7 +6,7 @@ import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
 import kr.hhplus.be.server.domain.order.command.OrderCommand;
 import kr.hhplus.be.server.domain.order.service.OrderService;
 import kr.hhplus.be.server.domain.product.service.ProductService;
-import kr.hhplus.be.server.event.publisher.OrderDataPublisher;
+import kr.hhplus.be.server.event.publisher.AppEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class OrderFacade {
     private final ProductService productService;
     private final BalanceService balanceService;
     private final IssuedCouponService issuedCouponService;
-    private final OrderDataPublisher orderDataPublisher;
+    private final AppEventPublisher eventPublisher;
 
     @MultiDistributedLock(
         keyPrefix = "ORDER",
@@ -30,6 +30,6 @@ public class OrderFacade {
         productService.decreaseStock(orderCommand.productCommandList());
         balanceService.useBalance(orderCommand.useBalanceCommand());
         issuedCouponService.useCoupon(orderCommand.useCouponCommandList());
-        orderDataPublisher.publish(orderCommand.toOrderDataEvent());
+        eventPublisher.publish(orderCommand.toOrderDataEvent());
     }
 }
