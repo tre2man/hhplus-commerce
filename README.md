@@ -11,6 +11,9 @@
 ## ERD
 [ERD 링크](docs/erd/erd.md)
 
+## API 문서
+[API 문서 링크](docs/swagger/swagger.md)
+
 ## 서버 실행
 
 `local` profile 로 실행하기 위하여 인프라가 설정되어 있는 Docker 컨테이너를 실행해주셔야 합니다.

@@ -20,6 +20,7 @@ CREATE TABLE product (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL COMMENT '상품 이름',
     stock INT NOT NULL COMMENT '재고',
+    price BIGINT NOT NULL COMMENT '상품 가격',
     description TEXT COMMENT '상품 상세설명',
     created_at DATETIME NOT NULL,
     updated_at DATETIME NOT NULL,
