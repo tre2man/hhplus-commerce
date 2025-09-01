@@ -18,11 +18,11 @@ public class CouponFacade {
 
     @Transactional
     public void issueCoupon(Long userId, Long couponId) {
+        couponService.issueCoupon(couponId);
         Integer expireDay = couponService.getCouponExpireDay(couponId);
         issuedCouponService.createIssuedCoupon(
                 new CreateIssuedCouponCommand(userId, couponId, expireDay)
         );
-        couponService.issueCoupon(couponId);
     }
 
     public List<UserCouponVo> getUserCoupons(Long userId) {

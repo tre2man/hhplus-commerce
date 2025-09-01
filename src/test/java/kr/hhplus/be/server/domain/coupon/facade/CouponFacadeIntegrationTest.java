@@ -19,17 +19,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Testcontainers
 class CouponFacadeIntegrationTest {
     @Autowired
-    private CouponRepository couponRepository;
+    private CouponFacade couponFacade;
 
     @Autowired
-    private CouponFacade couponFacade;
+    private CouponRepository couponRepository;
 
     @Autowired
     private DatabaseClean dataBaseClean;
 
     List<Coupon> InitialSetup() {
         // 초기 쿠폰 데이터 설정
-        Coupon coupon1 = Coupon.create("할인 쿠폰", 1000, 30, 7);
+        Coupon coupon1 = Coupon.create("할인 쿠폰", 1000, 5, 7);
         Coupon coupon2 = Coupon.create("무료 쿠폰", 500, 10 , 30);
 
         // 쿠폰 저장

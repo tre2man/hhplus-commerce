@@ -5,6 +5,7 @@ import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import kr.hhplus.be.server.domain.coupon.entity.IssuedCoupon;
 import kr.hhplus.be.server.domain.coupon.repository.IssuedCouponRepository;
+import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
 import kr.hhplus.be.server.domain.order.command.*;
 import kr.hhplus.be.server.domain.order.entity.Order;
 import kr.hhplus.be.server.domain.order.entity.OrderProduct;
@@ -22,8 +23,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 
 @SpringBootTest
 @Testcontainers
@@ -42,6 +42,9 @@ class OrderFacadeIntegrationTest {
 
     @Autowired
     private OrderProductRepository orderProductRepository;
+
+    @Autowired
+    private IssuedCouponService issuedCouponService;
 
     @Autowired
     private IssuedCouponRepository issuedCouponRepository;
@@ -73,11 +76,11 @@ class OrderFacadeIntegrationTest {
         ));
         this.productRepository.save(product);
 
-        Integer buyProductStock = 1;
-        Integer useAmount = productPrice;
+        Integer buyProductStock = 2;
+        Integer useAmount = productPrice * buyProductStock;
         OrderCommand orderCommand = new OrderCommand(
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
-                new OrderPaymentCommand(useAmount,0, useAmount),
+                new OrderPaymentCommand(useAmount, 0, useAmount),
                 new UseBalanceCommand(userId, useAmount),
                 List.of()
         );
@@ -125,13 +128,13 @@ class OrderFacadeIntegrationTest {
         IssuedCoupon issuedCoupon = IssuedCoupon.create(userId, 1L, LocalDateTime.now().plusDays(30));
         this.issuedCouponRepository.save(issuedCoupon);
 
-        Integer buyProductStock = 1;
-        Integer orderAmount = productPrice;
+        Integer buyProductStock = 2;
+        Integer orderAmount = (productPrice * buyProductStock);
         Integer useAmount = orderAmount - discountAmount;
         OrderCommand orderCommand = new OrderCommand(
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                 new OrderPaymentCommand(orderAmount, discountAmount, useAmount),
-                new UseBalanceCommand(userId, orderAmount),
+                new UseBalanceCommand(userId, useAmount),
                 List.of(new UseCouponCommand(userId, issuedCoupon.getId()))
         );
 
@@ -152,7 +155,7 @@ class OrderFacadeIntegrationTest {
 
         // 잔액 사용이 정상적으로 이루어졌는지 검증
         Balance updatedBalance = balanceRepository.findById(userId).orElseThrow();
-        assertThat(updatedBalance.getAmount()).isEqualTo(initialBalance - orderAmount);
+        assertThat(updatedBalance.getAmount()).isEqualTo(initialBalance - useAmount);
 
         // 쿠폰 사용이 정상적으로 이루어졌는지 검증
         IssuedCoupon updatedIssuedCoupon = issuedCouponRepository.findById(issuedCoupon.getId()).orElseThrow();
@@ -179,7 +182,7 @@ class OrderFacadeIntegrationTest {
         this.productRepository.save(product);
 
         Integer buyProductStock = 1;
-        Integer useAmount = productPrice;
+        Integer useAmount = productPrice * buyProductStock;
         OrderCommand orderCommand = new OrderCommand(
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                 new OrderPaymentCommand(useAmount, 0, useAmount),
@@ -212,7 +215,7 @@ class OrderFacadeIntegrationTest {
         this.productRepository.save(product);
 
         Integer buyProductStock = 1;
-        Integer useAmount = productPrice;
+        Integer useAmount = productPrice * buyProductStock;
         OrderCommand orderCommand = new OrderCommand(
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                 new OrderPaymentCommand(useAmount, 0, useAmount),
@@ -236,13 +239,13 @@ class OrderFacadeIntegrationTest {
 
         Integer productStock = 100;
         Integer productPrice = 10000;
-        Product product = productRepository.save(Product.create(
+        Product product = Product.create(
                 "테스트 상품",
                 productStock,
                 productPrice,
                 "테스트 설명"
-        ));
-        this.productRepository.save(product);
+        );
+        productRepository.save(product);
 
         // 쿠폰 사용 기간이 지난 쿠폰 생성
         Integer discountAmount = 5000;
@@ -255,7 +258,7 @@ class OrderFacadeIntegrationTest {
         OrderCommand orderCommand = new OrderCommand(
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                 new OrderPaymentCommand(orderAmount, discountAmount, useAmount),
-                new UseBalanceCommand(userId, orderAmount),
+                new UseBalanceCommand(userId, useAmount),
                 List.of(new UseCouponCommand(userId, issuedCoupon.getId()))
         );
 
