@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
-    public List<OrderProduct> findAllByCreatedAtAfter(LocalDateTime dateTime);
+    List<OrderProduct> findAllByOrderId(Long orderId);
+    List<OrderProduct> findAllByCreatedAtAfter(LocalDateTime dateTime);
 }

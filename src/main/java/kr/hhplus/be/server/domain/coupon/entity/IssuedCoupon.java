@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "issued_coupon")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 public class IssuedCoupon {
@@ -21,9 +23,8 @@ public class IssuedCoupon {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_id", nullable = false)
-    private Coupon coupon;
+    @Column(name = "coupon_id", nullable = false)
+    private Long couponId;
 
     @Column(name = "expire_at", nullable = false)
     private LocalDateTime expireAt;
@@ -46,9 +47,7 @@ public class IssuedCoupon {
 
     private IssuedCoupon(Long userId, Long couponId, LocalDateTime expireAt) {
         this.userId = userId;
-        Coupon couponRef = new Coupon();
-        couponRef.setId(couponId);
-        this.coupon = couponRef;
+        this.couponId = couponId;
         this.expireAt = expireAt;
     }
 
@@ -59,6 +58,9 @@ public class IssuedCoupon {
     public void use() {
         if (this.usedAt != null) {
             throw new IllegalStateException("이미 사용된 쿠폰입니다.");
+        }
+        if (this.expireAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("만료된 쿠폰입니다.");
         }
         this.usedAt = LocalDateTime.now();
     }

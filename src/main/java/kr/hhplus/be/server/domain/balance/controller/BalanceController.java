@@ -6,19 +6,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.domain.balance.dto.BalanceResponse;
 import kr.hhplus.be.server.domain.balance.dto.ChargeBalanceRequest;
-import kr.hhplus.be.server.domain.balance.service.BalanceFacade;
+import kr.hhplus.be.server.domain.balance.facade.BalanceFacade;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/balance")
 @Tag(name = "Balance", description = "잔액 API")
+@RequiredArgsConstructor
 public class BalanceController {
     private final BalanceFacade balanceFacade;
-
-    public BalanceController (BalanceFacade balanceFacade) {
-        this.balanceFacade = balanceFacade;
-    }
 
     @Operation(summary = "잔고 충전", description = "특정 사용자의 잔고를 충전할 수 있습니다.")
     @ApiResponse(responseCode = "201", description = "잔고 충전 성공")

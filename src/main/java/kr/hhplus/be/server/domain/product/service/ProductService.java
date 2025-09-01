@@ -1,18 +1,17 @@
 package kr.hhplus.be.server.domain.product.service;
 
+import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     public Product getProductById(Long productId) {
         return this.productRepository.findById(productId)
@@ -23,10 +22,15 @@ public class ProductService {
         return this.productRepository.findAllById(productIds);
     }
 
-    public boolean checkStock(Long productId, Integer quantity) {
-        Product product = this.productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. productId: " + productId));
-        return product.getStock() >= quantity;
+    public void decreaseStock(List<OrderProductCommand> command) {
+        for (OrderProductCommand orderProductCommand : command) {
+            Long productId = orderProductCommand.productId();
+            Product product = this.getProductById(productId);
+
+            Integer quantity = orderProductCommand.quantity();
+            product.decreaseStock(quantity);
+            this.productRepository.save(product);
+        }
     }
 
     public List<Product> getAllProducts() {

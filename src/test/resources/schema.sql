@@ -1,13 +1,3 @@
-<!-- 삭제 정책 통일 필요
-상위 상품 조회 시 주문기록을 통해서 조회 (데이터 플랫폼이 아니라) -->
-
-## ERD
-
-![erd](./erd.png)
-
-## DDL
-
-```sql
 CREATE TABLE product (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
                          name VARCHAR(255) NOT NULL COMMENT '상품 이름',
@@ -81,4 +71,3 @@ CREATE TABLE order_payment (
                                used_amount INT NOT NULL COMMENT '사용한 금액',
                                created_at DATETIME NOT NULL
 );
-```
