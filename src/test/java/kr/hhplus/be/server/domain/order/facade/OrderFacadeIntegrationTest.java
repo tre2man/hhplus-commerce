@@ -116,12 +116,12 @@ class OrderFacadeIntegrationTest {
 
         Integer productStock = 100;
         Integer productPrice = 10000;
-        Product product = productRepository.save(Product.create(
+        Product product = Product.create(
                 "테스트 상품",
                 productStock,
                 productPrice,
                 "테스트 설명"
-        ));
+        );
         this.productRepository.save(product);
 
         Integer discountAmount = 5000;
@@ -173,12 +173,12 @@ class OrderFacadeIntegrationTest {
 
         Integer productStock = 0; // 재고가 없는 상태
         Integer productPrice = 10000;
-        Product product = productRepository.save(Product.create(
+        Product product = Product.create(
                 "테스트 상품",
                 productStock,
                 productPrice,
                 "테스트 설명"
-        ));
+        );
         this.productRepository.save(product);
 
         Integer buyProductStock = 1;
@@ -206,12 +206,12 @@ class OrderFacadeIntegrationTest {
 
         Integer productStock = 100;
         Integer productPrice = 20000; // 잔액보다 높은 가격
-        Product product = productRepository.save(Product.create(
+        Product product = Product.create(
                 "테스트 상품",
                 productStock,
                 productPrice,
                 "테스트 설명"
-        ));
+        );
         this.productRepository.save(product);
 
         Integer buyProductStock = 1;

@@ -11,6 +11,17 @@ services:
       - MYSQL_DATABASE=hhplus
     volumes:
       - ./data/mysql/:/var/lib/mysql
+    networks:
+      - default
+
+  redis:
+    image: redis:8.2.0-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis/:/data
+    networks:
+      - default
 
 networks:
   default:

@@ -2,12 +2,14 @@ package kr.hhplus.be.server.domain.product.service;
 
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.repository.ProductRepository;
+import kr.hhplus.be.server.domain.product.vo.ProductVo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cache.CacheManager;
 
 import java.util.Optional;
 
@@ -22,9 +24,12 @@ class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private CacheManager cacheManager;
+
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productRepository);
+        productService = new ProductService(productRepository, cacheManager);
     }
 
     @Test
@@ -41,10 +46,14 @@ class ProductServiceTest {
         when(productRepository.findById(productId)).thenReturn(Optional.of(expectedProduct));
 
         // When
-        Product product = productService.getProductById(productId);
+        Optional<ProductVo> productVo = productService.findProductById(productId);
 
         // Then
-        assertThat(product).isEqualTo(expectedProduct);
+        assertThat(productVo).isPresent();
+        assertThat(productVo.get().getId()).isEqualTo(expectedProduct.getId());
+        assertThat(productVo.get().getName()).isEqualTo(expectedProduct.getName());
+        assertThat(productVo.get().getPrice()).isEqualTo(expectedProduct.getPrice());
+        assertThat(productVo.get().getStock()).isEqualTo(expectedProduct.getStock());
     }
 
     @Test
@@ -56,7 +65,31 @@ class ProductServiceTest {
 
         // When
         // Then
-        assertThatThrownBy(() -> productService.getProductById(productId))
+        assertThatThrownBy(() -> productService.findProductById(productId))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("[성공] 상품 정보 쿼리 조회")
+    void 상품_정보_쿼리_조회_성공() {
+        // Given
+        Long productId = 1L;
+        String name = "상품1";
+        String description = "상품1 설명";
+        Integer price = 10000;
+        Integer amount = 50;
+
+        Product expectedProduct = Product.create(name, amount, price, description);
+        when(productRepository.findById(productId)).thenReturn(Optional.of(expectedProduct));
+
+        // When
+        Optional<ProductVo> productVo = productService.findProductById(productId);
+
+        // Then
+        assertThat(productVo).isPresent();
+        assertThat(productVo.get().getId()).isEqualTo(expectedProduct.getId());
+        assertThat(productVo.get().getName()).isEqualTo(expectedProduct.getName());
+        assertThat(productVo.get().getPrice()).isEqualTo(expectedProduct.getPrice());
+        assertThat(productVo.get().getStock()).isEqualTo(expectedProduct.getStock());
     }
 }

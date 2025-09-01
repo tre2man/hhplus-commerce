@@ -36,7 +36,7 @@ class CouponServiceTest {
         Integer totalQuantity = 100;
         Integer expireDay = 30;
         Coupon coupon = Coupon.create("Test Coupon", discountAmount, totalQuantity, expireDay);
-        when(couponRepository.findById(couponId)).thenReturn(Optional.of(coupon));
+        when(couponRepository.findByIdForUpdate(couponId)).thenReturn(Optional.of(coupon));
 
         // When
         couponService.issueCoupon(couponId);
@@ -54,7 +54,7 @@ class CouponServiceTest {
         Integer totalQuantity = 0;
         Integer expireDay = 30;
         Coupon coupon = Coupon.create("Test Coupon", discountAmount, totalQuantity, expireDay);
-        when(couponRepository.findById(couponId)).thenReturn(Optional.of(coupon));
+        when(couponRepository.findByIdForUpdate(couponId)).thenReturn(Optional.of(coupon));
 
         // When, Then
         assertThatThrownBy(() -> couponService.issueCoupon(couponId))
