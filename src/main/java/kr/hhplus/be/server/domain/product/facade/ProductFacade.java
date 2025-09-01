@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.domain.product.facade;
 
 import kr.hhplus.be.server.config.cache.CacheNames;
-import kr.hhplus.be.server.domain.order.service.OrderProductService;
+import kr.hhplus.be.server.domain.dataplatform.service.DataPlatformService;
+import kr.hhplus.be.server.domain.product.dto.GetPopularProductResponse;
 import kr.hhplus.be.server.domain.product.dto.GetProductResponse;
 import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.domain.product.vo.ProductRankVo;
 import kr.hhplus.be.server.domain.product.vo.ProductVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +20,7 @@ import java.util.Optional;
 @Slf4j
 public class ProductFacade {
     private final ProductService productService;
-    private final OrderProductService orderProductService;
+    private final DataPlatformService dataPlatformService;
 
     public List<GetProductResponse> getAllProduct() {
         return productService.getAllProducts()
@@ -39,14 +41,12 @@ public class ProductFacade {
     }
 
     /**
-     * 3일 내 주문량이 가장 많은 상품 5개를 조회합니다.
+     * 3일 내 주문량이 가장 많은 상품 n개를 조회합니다.
      */
-    @Cacheable(value = CacheNames.POPULAR_PRODUCTS, key = "")
-    public List<GetProductResponse> getPopularProducts() {
-        List<Long> productIdList = orderProductService.getPopular5ProductIds();
-        return productService.getProductsByIds(productIdList)
-                .stream()
-                .map(GetProductResponse::of)
+    public List<GetPopularProductResponse> getPopularProducts() {
+        List<ProductRankVo> orderRankProductList = dataPlatformService.getTopNOrderProducts(5);
+        return orderRankProductList.stream()
+                .map(GetPopularProductResponse::of)
                 .toList();
     }
 }

@@ -9,9 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,6 +33,9 @@ class CouponFacadeConcurrencyTest {
     @Autowired
     private DatabaseClean dataBaseClean;
 
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
 
     Coupon InitialSetup() {
         Coupon coupon = Coupon.create("할인 쿠폰", 1000, 2, 7);
@@ -43,8 +46,8 @@ class CouponFacadeConcurrencyTest {
     @BeforeEach
     void setUp(){
         dataBaseClean.execute();
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
-
 
     @DisplayName("[성공] 동시에 쿠폰 발급 시도가 이루어져도 정상적으로 작동해야 한다.")
     @Test
@@ -66,7 +69,7 @@ class CouponFacadeConcurrencyTest {
                 try {
                     readyLatch.countDown();
                     startLatch.await();
-                    couponFacade.issueCoupon(currentUserId, coupon.getId());
+                    couponFacade.addIssueRequest(currentUserId, coupon.getId());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 } finally {
@@ -79,6 +82,9 @@ class CouponFacadeConcurrencyTest {
         startLatch.countDown();
         doneLatch.await();
         executor.shutdown();
+
+        // 요청 들어온 쿠폰 실제 발급 진행
+        couponFacade.issueCouponRequest();
 
         // Then
         Integer expectedIssuedQuantity = threads;
@@ -111,7 +117,7 @@ class CouponFacadeConcurrencyTest {
                 try {
                     readyLatch.countDown();
                     startLatch.await();
-                    couponFacade.issueCoupon(currentUserId, coupon.getId());
+                    couponFacade.addIssueRequest(currentUserId, coupon.getId());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 } finally {
@@ -124,6 +130,9 @@ class CouponFacadeConcurrencyTest {
         startLatch.countDown();
         doneLatch.await();
         executor.shutdown();
+
+        // 요청 들어온 쿠폰 실제 발급 진행
+        couponFacade.issueCouponRequest();
 
         // Then
         // 발급 수량 검증
