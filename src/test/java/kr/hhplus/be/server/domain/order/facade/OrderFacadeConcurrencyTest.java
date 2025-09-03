@@ -109,6 +109,7 @@ class OrderFacadeConcurrencyTest {
                     startLatch.await();
 
                     OrderCommand orderCommand = new OrderCommand(
+                            currentUserId,
                             List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                             new OrderPaymentCommand(orderAmount, discountAmount, useAmount),
                             new UseBalanceCommand(currentUserId, useAmount),
@@ -116,7 +117,7 @@ class OrderFacadeConcurrencyTest {
                             List.of(new UseCouponCommand(currentUserId, currentUserId))
                     );
 
-                    orderFacade.createOrder(currentUserId, orderCommand);
+                    orderFacade.createOrder(orderCommand);
                     successCount.incrementAndGet();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -192,13 +193,14 @@ class OrderFacadeConcurrencyTest {
                     startLatch.await();
 
                     OrderCommand orderCommand = new OrderCommand(
+                            currentUserId,
                             List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                             new OrderPaymentCommand(orderAmount, discountAmount, useAmount),
                             new UseBalanceCommand(currentUserId, useAmount),
                             List.of()
                     );
 
-                    orderFacade.createOrder(currentUserId, orderCommand);
+                    orderFacade.createOrder(orderCommand);
                     successCount.incrementAndGet();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -321,6 +323,7 @@ class OrderFacadeConcurrencyTest {
                     startLatch.await();
 
                     OrderCommand orderCommand = new OrderCommand(
+                            currentUserId,
                             List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                             new OrderPaymentCommand(orderAmount, discountAmount, useAmount),
                             new UseBalanceCommand(currentUserId, useAmount),
@@ -328,7 +331,7 @@ class OrderFacadeConcurrencyTest {
                             List.of(new UseCouponCommand(currentUserId, currentUserId))
                     );
 
-                    orderFacade.createOrder(currentUserId, orderCommand);
+                    orderFacade.createOrder(orderCommand);
                     successCount.incrementAndGet();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -453,6 +456,7 @@ class OrderFacadeConcurrencyTest {
                     startLatch.await();
 
                     OrderCommand orderCommand = new OrderCommand(
+                            currentUserId,
                             List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                             new OrderPaymentCommand(orderAmount, discountAmount, useAmount),
                             new UseBalanceCommand(currentUserId, useAmount),
@@ -460,7 +464,7 @@ class OrderFacadeConcurrencyTest {
                             List.of(new UseCouponCommand(currentUserId, currentUserId))
                     );
 
-                    orderFacade.createOrder(currentUserId, orderCommand);
+                    orderFacade.createOrder(orderCommand);
                     successCount.incrementAndGet();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();

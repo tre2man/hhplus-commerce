@@ -26,9 +26,10 @@ public class OrderRequest {
 
     public OrderCommand toCommand() {
         return new OrderCommand(
+                userId,
                 products.stream().map(OrderProductRequest::toCommand).toList(),
                 payment.toCommand(),
-                useBalance != null ? useBalance.toCommand() : null,
+                useBalance.toCommand(),
                 useCoupons != null ? useCoupons.stream().map(OrderUseCouponRequest::toCommand).toList() : List.of()
         );
     }

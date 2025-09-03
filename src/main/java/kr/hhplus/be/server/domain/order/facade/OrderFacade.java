@@ -7,6 +7,7 @@ import kr.hhplus.be.server.domain.order.command.OrderCommand;
 import kr.hhplus.be.server.domain.order.service.OrderService;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import kr.hhplus.be.server.event.publisher.AppEventPublisher;
+import kr.hhplus.be.server.event.enums.KafkaTopic;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,11 +26,11 @@ public class OrderFacade {
         keyPrefix = "ORDER",
         keyExpression = "#orderCommand.getProductIds()"
     )
-    public void createOrder(Long userId, OrderCommand orderCommand) {
-        orderService.createOrder(userId, orderCommand);
-        productService.decreaseStock(orderCommand.productCommandList());
+    public void createOrder(OrderCommand orderCommand) {
+        orderService.createOrder(orderCommand);
         balanceService.useBalance(orderCommand.useBalanceCommand());
+        productService.decreaseStock(orderCommand.productCommandList());
         issuedCouponService.useCoupon(orderCommand.useCouponCommandList());
-        eventPublisher.publish(orderCommand.toOrderDataEvent());
+        eventPublisher.publish(orderCommand.toOrderDataEvent(), KafkaTopic.ORDER);
     }
 }

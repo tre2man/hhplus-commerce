@@ -66,23 +66,24 @@ class OrderFacadeTest {
         List<UseCouponCommand> useCouponCommands = List.of();
         
         OrderCommand orderCommand = new OrderCommand(
+                userId,
                 productCommands,
                 paymentCommand,
                 useBalanceCommand,
                 useCouponCommands
         );
 
-        doNothing().when(orderService).createOrder(userId, orderCommand);
+        doNothing().when(orderService).createOrder(orderCommand);
         doNothing().when(productService).decreaseStock(productCommands);
         doNothing().when(balanceService).useBalance(useBalanceCommand);
         doNothing().when(issuedCouponService).useCoupon(useCouponCommands);
         doNothing().when(eventPublisher).publish(any(OrderDataEvent.class));
 
         // When
-        orderFacade.createOrder(userId, orderCommand);
+        orderFacade.createOrder(orderCommand);
 
         // Then
-        verify(orderService).createOrder(userId, orderCommand);
+        verify(orderService).createOrder(orderCommand);
         verify(productService).decreaseStock(productCommands);
         verify(balanceService).useBalance(useBalanceCommand);
         verify(issuedCouponService).useCoupon(useCouponCommands);
@@ -104,23 +105,24 @@ class OrderFacadeTest {
         );
         
         OrderCommand orderCommand = new OrderCommand(
+                userId,
                 productCommands,
                 paymentCommand,
                 useBalanceCommand,
                 useCouponCommands
         );
 
-        doNothing().when(orderService).createOrder(userId, orderCommand);
+        doNothing().when(orderService).createOrder(orderCommand);
         doNothing().when(productService).decreaseStock(productCommands);
         doNothing().when(balanceService).useBalance(useBalanceCommand);
         doNothing().when(issuedCouponService).useCoupon(useCouponCommands);
         doNothing().when(eventPublisher).publish(any(OrderDataEvent.class));
 
         // When
-        orderFacade.createOrder(userId, orderCommand);
+        orderFacade.createOrder(orderCommand);
 
         // Then
-        verify(orderService).createOrder(userId, orderCommand);
+        verify(orderService).createOrder(orderCommand);
         verify(productService).decreaseStock(productCommands);
         verify(balanceService).useBalance(useBalanceCommand);
         verify(issuedCouponService).useCoupon(useCouponCommands);
@@ -139,22 +141,23 @@ class OrderFacadeTest {
         List<UseCouponCommand> useCouponCommands = List.of();
 
         OrderCommand orderCommand = new OrderCommand(
+                userId,
                 productCommands,
                 paymentCommand,
                 useBalanceCommand,
                 useCouponCommands
         );
 
-        doNothing().when(orderService).createOrder(userId, orderCommand);
+        doNothing().when(orderService).createOrder(orderCommand);
         doThrow(new IllegalArgumentException("재고가 부족합니다."))
                 .when(productService).decreaseStock(productCommands);
 
         // When, Then
-        assertThatThrownBy(() -> orderFacade.createOrder(userId, orderCommand))
+        assertThatThrownBy(() -> orderFacade.createOrder(orderCommand))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("재고가 부족합니다.");
 
-        verify(orderService).createOrder(userId, orderCommand);
+        verify(orderService).createOrder(orderCommand);
         verify(productService).decreaseStock(productCommands);
         verify(balanceService, never()).useBalance(any());
         verify(issuedCouponService, never()).useCoupon(any());
@@ -173,23 +176,24 @@ class OrderFacadeTest {
         List<UseCouponCommand> useCouponCommands = List.of();
         
         OrderCommand orderCommand = new OrderCommand(
+                userId,
                 productCommands,
                 paymentCommand,
                 useBalanceCommand,
                 useCouponCommands
         );
 
-        doNothing().when(orderService).createOrder(userId, orderCommand);
+        doNothing().when(orderService).createOrder(orderCommand);
         doNothing().when(productService).decreaseStock(productCommands);
         doThrow(new IllegalArgumentException("잔고를 찾을 수 없습니다."))
                 .when(balanceService).useBalance(useBalanceCommand);
 
         // When, Then
-        assertThatThrownBy(() -> orderFacade.createOrder(userId, orderCommand))
+        assertThatThrownBy(() -> orderFacade.createOrder(orderCommand))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("잔고를 찾을 수 없습니다.");
 
-        verify(orderService).createOrder(userId, orderCommand);
+        verify(orderService).createOrder(orderCommand);
         verify(productService).decreaseStock(productCommands);
         verify(balanceService).useBalance(useBalanceCommand);
         verify(issuedCouponService, never()).useCoupon(any());

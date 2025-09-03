@@ -25,7 +25,7 @@ public class OrderController {
     public ResponseEntity<Void> placeOrder(
             @RequestBody OrderRequest orderRequest
     ) {
-        this.orderFacade.createOrder(orderRequest.getUserId(), orderRequest.toCommand());
+        this.orderFacade.createOrder(orderRequest.toCommand());
         return ResponseEntity.status(201).build();
     }
 }

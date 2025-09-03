@@ -76,6 +76,7 @@ class OrderFacadeIntegrationTest {
         Integer buyProductStock = 2;
         Integer useAmount = productPrice * buyProductStock;
         OrderCommand orderCommand = new OrderCommand(
+                userId,
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                 new OrderPaymentCommand(useAmount, 0, useAmount),
                 new UseBalanceCommand(userId, useAmount),
@@ -83,7 +84,7 @@ class OrderFacadeIntegrationTest {
         );
 
         // When
-        orderFacade.createOrder(userId, orderCommand);
+        orderFacade.createOrder(orderCommand);
 
         // Then
         // 주문 데이터가 정상적으로 생성되었는지 검증
@@ -129,6 +130,7 @@ class OrderFacadeIntegrationTest {
         Integer orderAmount = (productPrice * buyProductStock);
         Integer useAmount = orderAmount - discountAmount;
         OrderCommand orderCommand = new OrderCommand(
+                userId,
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                 new OrderPaymentCommand(orderAmount, discountAmount, useAmount),
                 new UseBalanceCommand(userId, useAmount),
@@ -136,7 +138,7 @@ class OrderFacadeIntegrationTest {
         );
 
         // When
-        orderFacade.createOrder(userId, orderCommand);
+        orderFacade.createOrder(orderCommand);
 
         // Then
         // 주문 데이터가 정상적으로 생성되었는지 검증
@@ -181,6 +183,7 @@ class OrderFacadeIntegrationTest {
         Integer buyProductStock = 1;
         Integer useAmount = productPrice * buyProductStock;
         OrderCommand orderCommand = new OrderCommand(
+                userId,
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                 new OrderPaymentCommand(useAmount, 0, useAmount),
                 new UseBalanceCommand(userId, useAmount),
@@ -188,7 +191,7 @@ class OrderFacadeIntegrationTest {
         );
 
         // When & Then
-        assertThatThrownBy(() -> orderFacade.createOrder(userId, orderCommand))
+        assertThatThrownBy(() -> orderFacade.createOrder(orderCommand))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -214,6 +217,7 @@ class OrderFacadeIntegrationTest {
         Integer buyProductStock = 1;
         Integer useAmount = productPrice * buyProductStock;
         OrderCommand orderCommand = new OrderCommand(
+                userId,
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                 new OrderPaymentCommand(useAmount, 0, useAmount),
                 new UseBalanceCommand(userId, useAmount),
@@ -221,7 +225,7 @@ class OrderFacadeIntegrationTest {
         );
 
         // When & Then
-        assertThatThrownBy(() -> orderFacade.createOrder(userId, orderCommand))
+        assertThatThrownBy(() -> orderFacade.createOrder(orderCommand))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -253,6 +257,7 @@ class OrderFacadeIntegrationTest {
         Integer orderAmount = productPrice;
         Integer useAmount = orderAmount - discountAmount; // 할인 금액을 고려한 사용 금액
         OrderCommand orderCommand = new OrderCommand(
+                userId,
                 List.of(new OrderProductCommand(product.getId(), buyProductStock)),
                 new OrderPaymentCommand(orderAmount, discountAmount, useAmount),
                 new UseBalanceCommand(userId, useAmount),
@@ -260,7 +265,7 @@ class OrderFacadeIntegrationTest {
         );
 
         // When & Then
-        assertThatThrownBy(() -> orderFacade.createOrder(userId, orderCommand))
+        assertThatThrownBy(() -> orderFacade.createOrder(orderCommand))
                 .isInstanceOf(IllegalStateException.class);
     }
 }

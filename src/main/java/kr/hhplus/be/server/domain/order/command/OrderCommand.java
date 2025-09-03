@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public record OrderCommand(
+    Long userId,
     List<OrderProductCommand> productCommandList,
     OrderPaymentCommand paymentCommand,
     UseBalanceCommand useBalanceCommand,
@@ -28,7 +29,7 @@ public record OrderCommand(
     }
 
     public OrderDataEvent toOrderDataEvent() {
-        return new OrderDataEvent(toCreateOrderDataCommandList());
+        return new OrderDataEvent(toCreateOrderDataCommandList(), useBalanceCommand.userId().toString());
     }
 
     private List<SendOrderDataCommand> toCreateOrderDataCommandList() {

@@ -14,8 +14,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
 
-    public void createOrder(Long userId, OrderCommand orderCommand) {
-        Order order = create(userId);
+    public void createOrder(OrderCommand orderCommand) {
+        Order order = create(orderCommand.userId());
         orderPaymentService.create(order.getId(), orderCommand.paymentCommand());
         orderProductService.create(order.getId(), orderCommand.productCommandList());
     }
