@@ -20,4 +20,8 @@ public class OrderPaymentService {
         );
         orderPaymentRepository.save(orderPayment);
     }
+
+    public void delete(Long orderId) {
+        orderPaymentRepository.deleteByOrderId(orderId);
+    }
 }

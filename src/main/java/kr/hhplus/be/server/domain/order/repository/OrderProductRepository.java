@@ -4,11 +4,7 @@ import kr.hhplus.be.server.domain.order.entity.OrderProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Repository
 public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
-    List<OrderProduct> findAllByOrderId(Long orderId);
-    List<OrderProduct> findAllByCreatedAtAfter(LocalDateTime dateTime);
+    void deleteByOrderId(Long orderId);
 }

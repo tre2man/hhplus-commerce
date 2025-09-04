@@ -25,7 +25,7 @@ public class BalanceHistory {
     private Integer changedAmount;
 
     @Column(name = "transaction_type", nullable = false)
-    private TransactionType transactionType;
+    private String transactionType;
 
     @Column(name = "created_at", nullable = false)
     @CreatedDate
@@ -36,7 +36,7 @@ public class BalanceHistory {
     private BalanceHistory(Long balanceId, Integer changedAmount, TransactionType transactionType) {
         this.balanceId = balanceId;
         this.changedAmount = changedAmount;
-        this.transactionType = transactionType;
+        this.transactionType = transactionType.getDescription();
     }
 
     public static BalanceHistory create(Long balanceId, Integer changedAmount, TransactionType transactionType) {

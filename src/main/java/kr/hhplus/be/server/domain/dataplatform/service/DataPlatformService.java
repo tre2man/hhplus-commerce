@@ -31,6 +31,14 @@ public class DataPlatformService {
         }
     }
 
+    public void sendOrderDataCompensation(List<SendOrderDataCommand> orderDataCommands) {
+        for( SendOrderDataCommand command : orderDataCommands) {
+            orderRankDataRepository.incrementDailyCountCompensation(
+                command.toIncrementDailyCountCommand()
+            );
+        }
+    }
+
     /**
      * 1. 오늘을 포함한 n일 전까지의 데이터를 조회합니다.
      * 2. n 일간의 주문 데이터를 기반으로 상위 n개의 상품을 계산합니다.

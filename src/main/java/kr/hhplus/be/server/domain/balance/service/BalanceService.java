@@ -44,8 +44,22 @@ public class BalanceService {
 
         BalanceHistory balanceHistory = BalanceHistory.create(
                 balance.getId(),
-                command.useAmount(),
+                -command.useAmount(),
                 TransactionType.USE
+        );
+        balanceHistoryRepository.save(balanceHistory);
+    }
+
+    public void useBalanceCompensation(UseBalanceCommand command) {
+        Balance balance = this.findByUserId(command.userId())
+                .orElseThrow(() -> new IllegalArgumentException("잔고를 찾을 수 없습니다."));
+        balance.charge(command.useAmount());
+        balanceRepository.save(balance);
+
+        BalanceHistory balanceHistory = BalanceHistory.create(
+                balance.getId(),
+                command.useAmount(),
+                TransactionType.USE_COMPENSATING
         );
         balanceHistoryRepository.save(balanceHistory);
     }
