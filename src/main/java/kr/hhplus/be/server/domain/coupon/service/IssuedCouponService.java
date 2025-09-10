@@ -8,9 +8,7 @@ import kr.hhplus.be.server.domain.coupon.vo.UserCouponVo;
 import kr.hhplus.be.server.domain.order.command.UseCouponCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,16 +17,6 @@ public class IssuedCouponService {
     private final IssuedCouponRepository issuedCouponRepository;
     private final IssuedCouponJdbcRepository issuedCouponJdbcRepository;
 
-    public void createIssuedCoupon(CreateIssuedCouponCommand command) {
-        IssuedCoupon issuedCoupon = IssuedCoupon.create(
-                command.userId(),
-                command.couponId(),
-                LocalDateTime.now().plusDays(command.expireDays())
-        );
-        issuedCouponRepository.save(issuedCoupon);
-    }
-
-    @Transactional
     public void createBulkIssuedCoupon(List<CreateIssuedCouponCommand> commandList) {
         issuedCouponJdbcRepository.batchInsert(commandList);
     }

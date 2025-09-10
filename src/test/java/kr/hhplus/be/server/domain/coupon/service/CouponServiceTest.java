@@ -1,6 +1,9 @@
 package kr.hhplus.be.server.domain.coupon.service;
 
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
+import kr.hhplus.be.server.domain.coupon.repository.CouponInfoRepository;
+import kr.hhplus.be.server.domain.coupon.repository.CouponIssueCountRepository;
+import kr.hhplus.be.server.domain.coupon.repository.CouponIssueUserRepository;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,9 +25,23 @@ class CouponServiceTest {
     @Mock
     CouponRepository couponRepository;
 
+    @Mock
+    CouponIssueCountRepository couponIssueCountRepository;
+
+    @Mock
+    CouponIssueUserRepository couponIssueUserRepository;
+
+    @Mock
+    CouponInfoRepository couponInfoRepository;
+
     @BeforeEach
     void setUp() {
-         couponService = new CouponService(couponRepository);
+         couponService = new CouponService(
+                 couponRepository,
+                 couponIssueCountRepository,
+                 couponIssueUserRepository,
+                 couponInfoRepository
+         );
     }
 
     @DisplayName("[성공] 쿠폰 발급")
