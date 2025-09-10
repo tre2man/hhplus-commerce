@@ -67,10 +67,4 @@ public class CouponService {
         // 쿠폰 발행 사용자 등록
         couponIssueUserRepository.addCouponIssueRequestUserId(couponId, userId);
     }
-
-    public CouponConstraintVo getCouponConstraint(Long couponId) {
-        Coupon coupon = couponRepository.findById(couponId)
-                .orElseThrow(IllegalArgumentException::new);
-        return CouponConstraintVo.of(coupon);
-    }
 }

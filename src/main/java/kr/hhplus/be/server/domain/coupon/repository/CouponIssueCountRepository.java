@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Objects;
 import java.util.Optional;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-
 @Repository
 @RequiredArgsConstructor
 public class CouponIssueCountRepository {
