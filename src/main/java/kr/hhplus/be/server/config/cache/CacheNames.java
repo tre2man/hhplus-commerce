@@ -15,6 +15,15 @@ public class CacheNames {
     public static final String ISSUE_REQUEST = "COUPON::ISSUE::REQUEST";
     public static final long ISSUE_REQUEST_EXPIRATION_MIN = 5L;
 
+    public static final String COUPON_ISSUABLE_COUNT = "COUPON::ISSUABLE::COUNT";
+    public static final long COUPON_ISSUABLE_COUNT_EXPIRATION_MIN = -1L;
+
+    public static final String COUPON_ISSUE_USERS = "COUPON::ISSUE::USERS";
+    public static final long COUPON_ISSUE_USERS_EXPIRATION_MIN = -1L;
+
+    public static final String COUPON_INFO = "COUPON::INFO";
+    public static final long COUPON_INFO_EXPIRATION_MIN = -1L;
+
     public static final String RANK_ORDER_DAY = "RANK::ORDER::DAY";
     public static final long RANK_ORDER_DAY_EXPIRATION_MIN = 4L;
 
@@ -26,8 +35,11 @@ public class CacheNames {
                 new CacheName(POPULAR_PRODUCTS, POPULAR_PRODUCTS_EXPIRATION_MIN, TimeUnit.MINUTES),
                 new CacheName(PRODUCT_INFO, PRODUCT_INFO_EXPIRATION_MIN, TimeUnit.MINUTES),
                 new CacheName(ISSUE_REQUEST, ISSUE_REQUEST_EXPIRATION_MIN, TimeUnit.SECONDS),
-                new CacheName(RANK_ORDER_DAY, RANK_ORDER_DAY_EXPIRATION_MIN, TimeUnit.DAYS)
-                , new CacheName(RANK_ORDER_RESULT, RANK_ORDER_RESULT_EXPIRATION_MIN, TimeUnit.DAYS)
+                new CacheName(COUPON_ISSUABLE_COUNT, COUPON_ISSUABLE_COUNT_EXPIRATION_MIN, TimeUnit.MINUTES),
+                new CacheName(COUPON_ISSUE_USERS, COUPON_ISSUE_USERS_EXPIRATION_MIN, TimeUnit.MINUTES),
+                new CacheName(COUPON_INFO, COUPON_INFO_EXPIRATION_MIN, TimeUnit.MINUTES),
+                new CacheName(RANK_ORDER_DAY, RANK_ORDER_DAY_EXPIRATION_MIN, TimeUnit.DAYS),
+                new CacheName(RANK_ORDER_RESULT, RANK_ORDER_RESULT_EXPIRATION_MIN, TimeUnit.DAYS)
         );
     }
 

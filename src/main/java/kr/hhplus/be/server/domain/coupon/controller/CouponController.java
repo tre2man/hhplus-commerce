@@ -2,6 +2,7 @@ package kr.hhplus.be.server.domain.coupon.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kr.hhplus.be.server.domain.coupon.dto.CreateCouponRequest;
 import kr.hhplus.be.server.domain.coupon.dto.IssueCouponRequest;
 import kr.hhplus.be.server.domain.coupon.dto.UserCouponResponse;
 import kr.hhplus.be.server.domain.coupon.facade.CouponFacade;
@@ -19,7 +20,16 @@ import java.util.List;
 public class CouponController {
     private final CouponFacade couponFacade;
 
-    @PostMapping()
+    @PostMapping("/create")
+    @Operation(summary = "쿠폰 생성", description = "발행 가능한 쿠폰을 생성합니다.")
+    public ResponseEntity<Void> createCoupon(
+            @RequestBody CreateCouponRequest createCouponRequest
+    ) {
+        couponFacade.createCoupon(createCouponRequest.toCreateCouponCommand());
+        return ResponseEntity.status(201).build();
+    }
+
+    @PostMapping("/issue")
     @Operation(summary = "쿠폰 발급", description = "사용자가 쿠폰을 발급받습니다.")
     public ResponseEntity<Void> issueCoupon(
             @RequestBody IssueCouponRequest issueCouponRequest
@@ -28,7 +38,7 @@ public class CouponController {
         return ResponseEntity.status(201).build();
     }
 
-    @GetMapping()
+    @GetMapping("/list")
     @Operation(summary = "쿠폰 목록 조회", description = "사용자가 보유한 쿠폰 목록을 조회합니다.")
     public ResponseEntity<List<UserCouponResponse>> getCoupons(
             @RequestParam(value = "userId", required = false) Long userId
