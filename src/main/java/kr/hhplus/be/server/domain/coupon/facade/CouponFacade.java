@@ -2,11 +2,9 @@ package kr.hhplus.be.server.domain.coupon.facade;
 
 import kr.hhplus.be.server.domain.coupon.command.AddIssueRequestCommand;
 import kr.hhplus.be.server.domain.coupon.command.CreateCouponCommand;
-import kr.hhplus.be.server.domain.coupon.command.CreateIssuedCouponCommand;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.service.IssueRequestService;
 import kr.hhplus.be.server.domain.coupon.service.IssuedCouponService;
-import kr.hhplus.be.server.domain.coupon.vo.CouponConstraintVo;
 import kr.hhplus.be.server.domain.coupon.vo.UserCouponVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
