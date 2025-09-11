@@ -45,6 +45,23 @@ public class ProductService {
     }
 
     @Transactional
+    public void increaseStock(List<OrderProductCommand> command) {
+        for (OrderProductCommand orderProductCommand : command) {
+            Long productId = orderProductCommand.productId();
+            Product product = this.getProductByIdForUpdate(productId);
+
+            Integer quantity = orderProductCommand.quantity();
+            product.increaseStock(quantity);
+            this.productRepository.save(product);
+            // 캐시 무효화
+            Cache cache = this.cacheManager.getCache(CacheNames.PRODUCT_INFO);
+            if (cache != null) {
+                cache.evict(productId);
+            }
+        }
+    }
+
+    @Transactional
     public void decreaseStock(List<OrderProductCommand> command) {
         for (OrderProductCommand orderProductCommand : command) {
             Long productId = orderProductCommand.productId();

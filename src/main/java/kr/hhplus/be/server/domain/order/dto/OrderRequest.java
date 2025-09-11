@@ -5,6 +5,7 @@ import kr.hhplus.be.server.domain.order.command.OrderCommand;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Schema(description = "주문 요청 정보")
@@ -26,9 +27,11 @@ public class OrderRequest {
 
     public OrderCommand toCommand() {
         return new OrderCommand(
+                userId,
+                Optional.empty(),
                 products.stream().map(OrderProductRequest::toCommand).toList(),
                 payment.toCommand(),
-                useBalance != null ? useBalance.toCommand() : null,
+                useBalance.toCommand(),
                 useCoupons != null ? useCoupons.stream().map(OrderUseCouponRequest::toCommand).toList() : List.of()
         );
     }

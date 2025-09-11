@@ -41,6 +41,12 @@ public class OrderRankDataRepository  {
         redisTemplate.expire(key, Duration.ofDays(CacheNames.RANK_ORDER_DAY_EXPIRATION_MIN));
     }
 
+    public void incrementDailyCountCompensation(IncrementDailyCountCommand command) {
+        String key = dayKey(LocalDateTime.now(KST));
+        redisTemplate.opsForZSet().incrementScore(key, String.valueOf(command.productId()), -command.count());
+        redisTemplate.expire(key, Duration.ofDays(CacheNames.RANK_ORDER_DAY_EXPIRATION_MIN));
+    }
+
     /**
      * 특정 날짜의 상위 n개의 데이터를 반환합니다.
      * TODO: 비즈니스 로직 분리 필요

@@ -64,4 +64,11 @@ public class IssuedCoupon {
         }
         this.usedAt = LocalDateTime.now();
     }
+
+    public void useCompensation() {
+        if (this.usedAt == null) {
+            throw new IllegalStateException("사용되지 않은 쿠폰입니다.");
+        }
+        this.usedAt = null;
+    }
 }

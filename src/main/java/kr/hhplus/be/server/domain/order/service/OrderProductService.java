@@ -21,4 +21,8 @@ public class OrderProductService {
                 .toList();
         this.orderProductRepository.saveAll(orderProductList);
     }
+
+    public void delete(Long orderId) {
+        orderProductRepository.deleteByOrderId(orderId);
+    }
 }

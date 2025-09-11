@@ -85,7 +85,7 @@
     - OrderId 를 공통의 키로 사용
   - 보상 플로우
     - 각 서비스에서 보상 트랜잭션을 구현
-      - OrderService.CancelOrder
-      - ProductService.increaseStock
-      - BalanceService.cancelUseBalance
-      - CouponService.cancelUseCoupon
+      - OrderService.createOrderCompensation
+      - ProductService.decreaseStock
+      - BalanceService.useBalanceCompensation
+      - IssuedCouponService.useCouponCompensation

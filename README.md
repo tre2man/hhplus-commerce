@@ -29,6 +29,12 @@
 ## 이벤트 기반 설계 보고서
 [이벤트 기반 설계 보고서 링크](docs/event/event.md)
 
+## 카프카 학습 보고서
+[카프카 학습 보고서 링크](docs/kafka/kafka.md)
+
+## 카프카 설계 보고서
+[카프카 설계 보고서 링크](docs/kafka/kafka-design.md)
+
 ## 서버 실행
 
 `local` profile 로 실행하기 위하여 인프라가 설정되어 있는 Docker 컨테이너를 실행해주셔야 합니다.

@@ -34,10 +34,27 @@ public class IssuedCouponService {
     }
 
     public void useCoupon(List<UseCouponCommand> commandList) {
+        if (commandList.isEmpty()) {
+            return;
+        }
+
         for (UseCouponCommand command : commandList) {
             IssuedCoupon issuedCoupon = issuedCouponRepository.findById(command.issuedCouponId())
                     .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
             issuedCoupon.use();
+            issuedCouponRepository.save(issuedCoupon);
+        }
+    }
+
+    public void useCouponCompensation(List<UseCouponCommand> commandList) {
+        if (commandList.isEmpty()) {
+            return;
+        }
+
+        for (UseCouponCommand command : commandList) {
+            IssuedCoupon issuedCoupon = issuedCouponRepository.findById(command.issuedCouponId())
+                    .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+            issuedCoupon.useCompensation();
             issuedCouponRepository.save(issuedCoupon);
         }
     }

@@ -57,4 +57,11 @@ public class Product {
         }
         this.stock -= quantity;
     }
+
+    public void increaseStock(int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("수량은 음수일 수 없습니다. 요청 수량: " + quantity);
+        }
+        this.stock += quantity;
+    }
 }
