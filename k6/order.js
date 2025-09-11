@@ -1,15 +1,22 @@
 import http from 'k6/http';
 
-import { sleep } from 'k6';
-
 const TOTAL_USERS = 100;
 
-export let options  = {
-    stages: [
-        {duration: '10s', target: 80},
-        {duration: '1m', target: 100},
-        {duration: '10s', target: 80},
-    ],
+export const options  = {
+    scenarios: {
+        fixed_rps_test: {
+            executor: 'ramping-arrival-rate',
+            startRate: 0,
+            timeUnit: '1s',
+            preAllocatedVUs: 100,
+            maxVUs: 100,
+            stages: [
+                { duration: '10s', target: TOTAL_USERS },
+                { duration: '1m', target: TOTAL_USERS },
+                { duration: '10s', target: 0 },
+            ],
+        },
+    },
     thresholds: {
         http_req_duration: ['p(95)<500'],
         http_req_failed: ['rate<0.05'],
@@ -17,17 +24,10 @@ export let options  = {
 }
 
 export default function () {
-    // 동시에 같은 유저가 요청을 보내는 것을 방지하기 위해 __VU를 사용하여 유저 ID를 생성
-    const userId = ((__VU - 1) % TOTAL_USERS) + 1;
-
-    // 1. 유저가 인기상품 조회 (5개)
-    const rawProductInfoList = http.get('http://localhost:8080/product/popular', {
-        tags: {name: 'popular-product'},
-    });
-
+    const userId = __VU + 1;
     // 2. 해당 상품의 정보 조회
-    const productInfoList = JSON.parse(rawProductInfoList.body);
-    const productId = productInfoList[Math.floor(Math.random() * productInfoList.length)].id;
+    // 1~100 중 하나
+    const productId = Math.floor(Math.random() * 100) + 1;
     const rawProductDetail = http.get(`http://localhost:8080/product/${productId}`, {
         tags: {name: 'product-detail'},
     });
@@ -58,6 +58,4 @@ export default function () {
         },
         tags: {name: 'order'},
     });
-
-    sleep(1);
 }
