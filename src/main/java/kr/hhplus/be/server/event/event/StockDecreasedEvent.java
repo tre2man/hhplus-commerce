@@ -44,7 +44,6 @@ public class StockDecreasedEvent implements BaseEvent {
     
     @JsonIgnore
     public BalanceUsedEvent toBalanceUsedEventForCompensation() {
-        // 보상 시 StockDecreasedEvent → BalanceUsedEvent 변환
         return new BalanceUsedEvent(
             userId,
             orderId,

@@ -34,4 +34,35 @@
 쿠폰 사용 완료 이벤트 : userId
 
 ## 선착순 쿠폰 발급 설계
-쿠폰 발급 요청 -> 쿠폰 발급 가능자 검증 -> 유효하다면 kafka 로 발급 요청 전송 -> 쿠폰 발급 처리
+쿠폰 발급 요청 -> 쿠폰 발급 가능자 검증 -> 유효하다면 kafka 로 발급 요청 전송 -> 쿠폰 발급 처리 (bulk 로 처리)
+
+### 쿠폰 발급 요청 시퀀스 다이어그램
+```mermaid
+sequenceDiagram
+    autonumber
+    participant CouponController
+    participant CouponService
+    participant CouponInfoRepository
+    participant KafkaEventPublisher
+
+    CouponController->>CouponService: 쿠폰 발급 요청
+    CouponService->>CouponInfoRepository: 발행 유효성, 중복 발행 확인
+    CouponInfoRepository->>CouponService: 발행 유효성, 중복 발행 확인 데이터 반환
+    alt 유효하지 않은 발행요청
+        CouponService-->>CouponController: 에러 반환
+    end
+    CouponService->>KafkaEventPublisher: 쿠폰 발행 요청
+```
+
+### 쿠폰 발급 시퀀스 다이어그램
+```mermaid
+sequenceDiagram
+    autonumber
+    participant KafkaEventListener
+    participant IssuedCouponService
+    participant IssuedCouponJdbcRepository
+
+    KafkaEventListener->>IssuedCouponService: 쿠폰 발행 요청
+    IssuedCouponService->>IssuedCouponJdbcRepository: 배치로 쿠폰 지급
+    IssuedCouponService->>CouponService: 전체 발행된 쿠폰 차감 진행
+```

@@ -24,13 +24,12 @@ public class IssuedCouponJdbcRepository {
             return;
         }
 
-        final int batchSize = 1000;
         final LocalDateTime now = LocalDateTime.now();
 
         jdbcTemplate.batchUpdate(
                 SQL_INSERT,
                 commands,
-                batchSize,
+                commands.size(),
                 (ps, cmd) -> {
                     Integer days = cmd.expireDays(); // null 방지 체크 권장
                     LocalDateTime expireAt = now.plusDays(days);
