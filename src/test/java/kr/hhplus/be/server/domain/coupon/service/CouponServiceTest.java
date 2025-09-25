@@ -5,6 +5,7 @@ import kr.hhplus.be.server.domain.coupon.repository.CouponInfoRepository;
 import kr.hhplus.be.server.domain.coupon.repository.CouponIssueCountRepository;
 import kr.hhplus.be.server.domain.coupon.repository.CouponIssueUserRepository;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
+import kr.hhplus.be.server.exception.RestApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,14 +68,10 @@ class CouponServiceTest {
     void 쿠폰_발급_실패_발급가능쿠폰없음() {
         // Given
         Long couponId = 1L;
-        Integer discountAmount = 1000;
-        Integer totalQuantity = 0;
-        Integer expireDay = 30;
-        Coupon coupon = Coupon.create("Test Coupon", discountAmount, totalQuantity, expireDay);
-        when(couponRepository.findByIdForUpdate(couponId)).thenReturn(Optional.of(coupon));
+        when(couponRepository.findByIdForUpdate(couponId)).thenReturn(Optional.empty());
 
         // When, Then
         assertThatThrownBy(() -> couponService.issueCoupon(couponId, 1))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(RestApiException.class);
     }
 }

@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.product.entity;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.server.domain.product.exception.ProductErrorCode;
+import kr.hhplus.be.server.exception.RestApiException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -53,14 +55,14 @@ public class Product {
 
     public void decreaseStock(int quantity) {
         if (this.stock < quantity) {
-            throw new IllegalArgumentException("재고가 부족합니다. 현재 재고: " + this.stock + ", 요청 수량: " + quantity);
+            throw new RestApiException(ProductErrorCode.INSUFFICIENT_STOCK);
         }
         this.stock -= quantity;
     }
 
     public void increaseStock(int quantity) {
         if (quantity < 0) {
-            throw new IllegalArgumentException("수량은 음수일 수 없습니다. 요청 수량: " + quantity);
+            throw new RestApiException(ProductErrorCode.NEGATIVE_STOCK);
         }
         this.stock += quantity;
     }

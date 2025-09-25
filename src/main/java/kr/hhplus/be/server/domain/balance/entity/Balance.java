@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.balance.entity;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.server.domain.balance.exception.BalanceErrorCode;
+import kr.hhplus.be.server.exception.RestApiException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,9 +16,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class Balance {
-    private static final Integer MAX_AMOUNT = 1_000_000_000;
-    private static final Integer MAX_CHARGE_AMOUNT = 5_000_000;
-    private static final Integer MIN_AMOUNT = 0;
+    public static final int MAX_AMOUNT = 1_000_000_000;
+    public static final int MAX_CHARGE_AMOUNT = 5_000_000;
+    public static final int MIN_AMOUNT = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,8 +47,11 @@ public class Balance {
     protected Balance() {}
 
     private Balance(Long userId, Integer amount) {
-        if (amount < MIN_AMOUNT || amount > MAX_AMOUNT) {
-            throw new IllegalArgumentException("잔액은 " + MIN_AMOUNT + "원 이상, " + MAX_AMOUNT + "원 이하이어야 합니다.");
+        if (amount < MIN_AMOUNT) {
+            throw new RestApiException(BalanceErrorCode.LOW_BALANCE);
+        }
+        if (amount > MAX_AMOUNT) {
+            throw new RestApiException(BalanceErrorCode.OVER_BALANCE);
         }
         this.userId = userId;
         this.amount = amount;
@@ -58,23 +63,23 @@ public class Balance {
 
     public void charge(Integer chargeAmount) {
         if (chargeAmount < MIN_AMOUNT) {
-            throw new IllegalArgumentException("충전 금액은 1원 이상이어야 합니다.");
+            throw new RestApiException(BalanceErrorCode.CHARGE_LOW_BALANCE);
         }
         if (chargeAmount > MAX_CHARGE_AMOUNT) {
-            throw new IllegalArgumentException("1회 충전 금액은 " + MAX_CHARGE_AMOUNT + "원을 초과할 수 없습니다.");
+            throw new RestApiException(BalanceErrorCode.CHARGE_OVER_BALANCE);
         }
         if (this.amount + chargeAmount > MAX_AMOUNT) {
-            throw new IllegalArgumentException("잔액이 최대 금액을 초과할 수 없습니다.");
+            throw new RestApiException(BalanceErrorCode.OVER_BALANCE);
         }
         this.amount += chargeAmount;
     }
 
     public void use(Integer useAmount) {
         if (useAmount < MIN_AMOUNT) {
-            throw new IllegalArgumentException("사용 금액은 0원 이상이어야 합니다.");
+            throw new RestApiException(BalanceErrorCode.LOW_BALANCE);
         }
         if (this.amount - useAmount < MIN_AMOUNT) {
-            throw new IllegalArgumentException("잔액이 부족합니다.");
+            throw new RestApiException(BalanceErrorCode.LOW_BALANCE);
         }
         this.amount -= useAmount;
     }

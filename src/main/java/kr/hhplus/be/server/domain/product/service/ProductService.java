@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.product.service;
 
 import kr.hhplus.be.server.config.cache.CacheNames;
+import kr.hhplus.be.server.domain.product.exception.ProductErrorCode;
+import kr.hhplus.be.server.exception.RestApiException;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
@@ -27,7 +29,7 @@ public class ProductService {
 
     private Product getProductByIdForUpdate(Long productId) {
         return this.productRepository.findByIdForUpdate(productId)
-                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. productId: " + productId));
+                .orElseThrow(() -> new RestApiException(ProductErrorCode.NOT_FOUND_PRODUCT));
     }
 
     public List<ProductVo> getProductsByIds(List<Long> productIds) {

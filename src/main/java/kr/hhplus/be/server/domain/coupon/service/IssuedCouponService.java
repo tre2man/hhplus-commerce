@@ -2,10 +2,12 @@ package kr.hhplus.be.server.domain.coupon.service;
 
 import kr.hhplus.be.server.domain.coupon.command.CreateIssuedCouponCommand;
 import kr.hhplus.be.server.domain.coupon.entity.IssuedCoupon;
+import kr.hhplus.be.server.domain.coupon.exception.CouponErrorCode;
 import kr.hhplus.be.server.domain.coupon.repository.IssuedCouponJdbcRepository;
 import kr.hhplus.be.server.domain.coupon.repository.IssuedCouponRepository;
 import kr.hhplus.be.server.domain.coupon.vo.UserCouponVo;
 import kr.hhplus.be.server.domain.order.command.UseCouponCommand;
+import kr.hhplus.be.server.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,7 @@ public class IssuedCouponService {
 
         for (UseCouponCommand command : commandList) {
             IssuedCoupon issuedCoupon = issuedCouponRepository.findById(command.issuedCouponId())
-                    .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+                    .orElseThrow(() -> new RestApiException(CouponErrorCode.NOT_FOUND_COUPON));
             issuedCoupon.use();
             issuedCouponRepository.save(issuedCoupon);
         }
@@ -41,7 +43,7 @@ public class IssuedCouponService {
 
         for (UseCouponCommand command : commandList) {
             IssuedCoupon issuedCoupon = issuedCouponRepository.findById(command.issuedCouponId())
-                    .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+                    .orElseThrow(() -> new RestApiException(CouponErrorCode.NOT_FOUND_COUPON));
             issuedCoupon.useCompensation();
             issuedCouponRepository.save(issuedCoupon);
         }

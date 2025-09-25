@@ -5,6 +5,7 @@ import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.repository.BalanceHistoryRepository;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import kr.hhplus.be.server.domain.order.command.UseBalanceCommand;
+import kr.hhplus.be.server.exception.RestApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ class BalanceServiceTest {
         // When, Then
         assertThatThrownBy(() -> {
             balanceService.chargeBalance(command);
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(RestApiException.class);
     }
 
     @DisplayName("[성공] 잔액 사용 성공")
@@ -104,6 +105,6 @@ class BalanceServiceTest {
         // When, Then
         assertThatThrownBy(() -> {
             balanceService.useBalance(command);
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(RestApiException.class);
     }
 }

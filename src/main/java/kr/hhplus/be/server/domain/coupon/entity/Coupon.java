@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.coupon.entity;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.server.domain.coupon.exception.CouponErrorCode;
+import kr.hhplus.be.server.exception.RestApiException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -61,7 +63,7 @@ public class Coupon {
 
     public void issue(Integer count) {
         if (issuedQuantity + count > totalQuantity) {
-            throw new IllegalStateException("쿠폰 발급 가능 수량을 초과했습니다.");
+            throw new RestApiException(CouponErrorCode.OVER_COUPON_ISSUE_COUNT);
         }
         issuedQuantity += count;
     }
