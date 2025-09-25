@@ -25,8 +25,4 @@ public class CouponConstraintVo {
                 coupon.getExpireDay()
         );
     }
-
-    public Integer issuableCount() {
-        return totalCount - issuedCount;
-    }
 }
