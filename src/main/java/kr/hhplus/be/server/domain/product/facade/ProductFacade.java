@@ -4,9 +4,11 @@ import kr.hhplus.be.server.config.cache.CacheNames;
 import kr.hhplus.be.server.domain.dataplatform.service.DataPlatformService;
 import kr.hhplus.be.server.domain.product.dto.GetPopularProductResponse;
 import kr.hhplus.be.server.domain.product.dto.GetProductResponse;
+import kr.hhplus.be.server.domain.product.exception.ProductErrorCode;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import kr.hhplus.be.server.domain.product.vo.ProductRankVo;
 import kr.hhplus.be.server.domain.product.vo.ProductVo;
+import kr.hhplus.be.server.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -30,12 +32,11 @@ public class ProductFacade {
 
     }
 
-    // TODO: 에러 처리 개선 필요
     @Cacheable(value = CacheNames.PRODUCT_INFO, key = "#productId")
     public GetProductResponse getProductById(Long productId) {
         Optional<ProductVo> productVo = productService.findProductById(productId);
         if (productVo.isEmpty()) {
-            throw new IllegalArgumentException("상품을 찾을 수 없습니다. productId: " + productId);
+            throw new RestApiException(ProductErrorCode.NOT_FOUND_PRODUCT);
         }
         return GetProductResponse.of(productVo.get());
     }
