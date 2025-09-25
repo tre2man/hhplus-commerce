@@ -4,9 +4,11 @@ import kr.hhplus.be.server.domain.balance.TransactionType;
 import kr.hhplus.be.server.domain.balance.command.ChargeBalanceCommand;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.entity.BalanceHistory;
+import kr.hhplus.be.server.domain.balance.exception.BalanceErrorCode;
 import kr.hhplus.be.server.domain.balance.repository.BalanceHistoryRepository;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import kr.hhplus.be.server.domain.order.command.UseBalanceCommand;
+import kr.hhplus.be.server.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,7 @@ public class BalanceService {
 
     public void chargeBalance(ChargeBalanceCommand command) {
         Balance balance = this.findByUserId(command.userId())
-                .orElseThrow(() -> new IllegalArgumentException("잔고를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RestApiException(BalanceErrorCode.NOT_FOUND_BALANCE));
         balance.charge(command.chargeAmount());
         balanceRepository.save(balance);
 
@@ -38,7 +40,7 @@ public class BalanceService {
 
     public void useBalance(UseBalanceCommand command) {
         Balance balance = this.findByUserId(command.userId())
-                .orElseThrow(() -> new IllegalArgumentException("잔고를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RestApiException(BalanceErrorCode.NOT_FOUND_BALANCE));
         balance.use(command.useAmount());
         balanceRepository.save(balance);
 
@@ -52,7 +54,7 @@ public class BalanceService {
 
     public void useBalanceCompensation(UseBalanceCommand command) {
         Balance balance = this.findByUserId(command.userId())
-                .orElseThrow(() -> new IllegalArgumentException("잔고를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RestApiException(BalanceErrorCode.NOT_FOUND_BALANCE));
         balance.charge(command.useAmount());
         balanceRepository.save(balance);
 
