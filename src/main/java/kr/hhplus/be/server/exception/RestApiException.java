@@ -1,10 +1,7 @@
 package kr.hhplus.be.server.exception;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@RequiredArgsConstructor
-public class RestApiException extends RuntimeException{
-    private final ErrorCode errorCode;
+public class RestApiException extends BaseException {
+    public RestApiException(ErrorCode errorCode) {
+        super(errorCode);
+    }
 }
