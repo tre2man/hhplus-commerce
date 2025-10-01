@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.product.service;
 
 import kr.hhplus.be.server.config.cache.CacheNames;
 import kr.hhplus.be.server.domain.product.exception.ProductErrorCode;
-import kr.hhplus.be.server.exception.RestApiException;
+import kr.hhplus.be.server.exception.exception.RestApiException;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import kr.hhplus.be.server.domain.order.command.OrderProductCommand;

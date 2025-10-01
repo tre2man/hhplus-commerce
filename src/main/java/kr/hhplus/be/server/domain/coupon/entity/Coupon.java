@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.coupon.entity;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.coupon.exception.CouponErrorCode;
-import kr.hhplus.be.server.exception.DomainException;
+import kr.hhplus.be.server.exception.exception.DomainException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;

@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.balance.entity;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.balance.exception.BalanceErrorCode;
-import kr.hhplus.be.server.exception.DomainException;
+import kr.hhplus.be.server.exception.exception.DomainException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;

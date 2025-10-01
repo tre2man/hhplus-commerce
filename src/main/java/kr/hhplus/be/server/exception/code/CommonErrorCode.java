@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.exception;
+package kr.hhplus.be.server.exception.code;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

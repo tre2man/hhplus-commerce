@@ -8,7 +8,7 @@ import kr.hhplus.be.server.domain.balance.exception.BalanceErrorCode;
 import kr.hhplus.be.server.domain.balance.repository.BalanceHistoryRepository;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import kr.hhplus.be.server.domain.order.command.UseBalanceCommand;
-import kr.hhplus.be.server.exception.RestApiException;
+import kr.hhplus.be.server.exception.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

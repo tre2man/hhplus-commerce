@@ -8,7 +8,7 @@ import kr.hhplus.be.server.domain.product.exception.ProductErrorCode;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import kr.hhplus.be.server.domain.product.vo.ProductRankVo;
 import kr.hhplus.be.server.domain.product.vo.ProductVo;
-import kr.hhplus.be.server.exception.RestApiException;
+import kr.hhplus.be.server.exception.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;

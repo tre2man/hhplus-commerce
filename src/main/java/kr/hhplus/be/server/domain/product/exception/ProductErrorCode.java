@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.product.exception;
 
-import kr.hhplus.be.server.exception.ErrorCode;
+import kr.hhplus.be.server.exception.code.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

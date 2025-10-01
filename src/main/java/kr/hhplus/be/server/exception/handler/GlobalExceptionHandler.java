@@ -1,5 +1,10 @@
-package kr.hhplus.be.server.exception;
+package kr.hhplus.be.server.exception.handler;
 
+import kr.hhplus.be.server.exception.code.CommonErrorCode;
+import kr.hhplus.be.server.exception.code.ErrorCode;
+import kr.hhplus.be.server.exception.exception.DomainException;
+import kr.hhplus.be.server.exception.exception.RestApiException;
+import kr.hhplus.be.server.exception.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;

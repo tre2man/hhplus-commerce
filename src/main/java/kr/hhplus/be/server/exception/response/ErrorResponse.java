@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.exception;
+package kr.hhplus.be.server.exception.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
