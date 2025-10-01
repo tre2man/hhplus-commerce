@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.product.entity;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.product.exception.ProductErrorCode;
-import kr.hhplus.be.server.exception.RestApiException;
+import kr.hhplus.be.server.exception.exception.DomainException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -55,14 +55,14 @@ public class Product {
 
     public void decreaseStock(int quantity) {
         if (this.stock < quantity) {
-            throw new RestApiException(ProductErrorCode.INSUFFICIENT_STOCK);
+            throw new DomainException(ProductErrorCode.INSUFFICIENT_STOCK);
         }
         this.stock -= quantity;
     }
 
     public void increaseStock(int quantity) {
         if (quantity < 0) {
-            throw new RestApiException(ProductErrorCode.NEGATIVE_STOCK);
+            throw new DomainException(ProductErrorCode.NEGATIVE_STOCK);
         }
         this.stock += quantity;
     }

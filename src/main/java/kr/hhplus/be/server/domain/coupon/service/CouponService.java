@@ -8,7 +8,7 @@ import kr.hhplus.be.server.domain.coupon.repository.CouponInfoRepository;
 import kr.hhplus.be.server.domain.coupon.repository.CouponIssueCountRepository;
 import kr.hhplus.be.server.domain.coupon.repository.CouponIssueUserRepository;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
-import kr.hhplus.be.server.exception.RestApiException;
+import kr.hhplus.be.server.exception.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

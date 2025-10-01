@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.balance.entity;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.balance.exception.BalanceErrorCode;
-import kr.hhplus.be.server.exception.RestApiException;
+import kr.hhplus.be.server.exception.exception.DomainException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -48,10 +48,10 @@ public class Balance {
 
     private Balance(Long userId, Integer amount) {
         if (amount < MIN_AMOUNT) {
-            throw new RestApiException(BalanceErrorCode.LOW_BALANCE);
+            throw new DomainException(BalanceErrorCode.LOW_BALANCE);
         }
         if (amount > MAX_AMOUNT) {
-            throw new RestApiException(BalanceErrorCode.OVER_BALANCE);
+            throw new DomainException(BalanceErrorCode.OVER_BALANCE);
         }
         this.userId = userId;
         this.amount = amount;
@@ -63,23 +63,23 @@ public class Balance {
 
     public void charge(Integer chargeAmount) {
         if (chargeAmount < MIN_AMOUNT) {
-            throw new RestApiException(BalanceErrorCode.CHARGE_LOW_BALANCE);
+            throw new DomainException(BalanceErrorCode.CHARGE_LOW_BALANCE);
         }
         if (chargeAmount > MAX_CHARGE_AMOUNT) {
-            throw new RestApiException(BalanceErrorCode.CHARGE_OVER_BALANCE);
+            throw new DomainException(BalanceErrorCode.CHARGE_OVER_BALANCE);
         }
         if (this.amount + chargeAmount > MAX_AMOUNT) {
-            throw new RestApiException(BalanceErrorCode.OVER_BALANCE);
+            throw new DomainException(BalanceErrorCode.OVER_BALANCE);
         }
         this.amount += chargeAmount;
     }
 
     public void use(Integer useAmount) {
         if (useAmount < MIN_AMOUNT) {
-            throw new RestApiException(BalanceErrorCode.LOW_BALANCE);
+            throw new DomainException(BalanceErrorCode.LOW_BALANCE);
         }
         if (this.amount - useAmount < MIN_AMOUNT) {
-            throw new RestApiException(BalanceErrorCode.LOW_BALANCE);
+            throw new DomainException(BalanceErrorCode.LOW_BALANCE);
         }
         this.amount -= useAmount;
     }

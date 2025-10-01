@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.balance.entity;
 
-import kr.hhplus.be.server.exception.RestApiException;
+import kr.hhplus.be.server.exception.exception.DomainException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -39,7 +39,7 @@ class BalanceEntityTest {
 
         // when, then
         assertThatThrownBy(() -> balance.charge(chargeAmount))
-                .isInstanceOf(RestApiException.class);
+                .isInstanceOf(DomainException.class);
     }
 
     @DisplayName("[실패] 잔액 충전 테스트 - 1회 최대 금액 초과")
@@ -54,7 +54,7 @@ class BalanceEntityTest {
 
         // when, then
         assertThatThrownBy(() -> balance.charge(chargeAmount))
-                .isInstanceOf(RestApiException.class);
+                .isInstanceOf(DomainException.class);
     }
 
     @DisplayName("[실패] 잔액 충전 테스트 - 누적 최대 금액 초과")
@@ -68,7 +68,7 @@ class BalanceEntityTest {
 
         // when, then
         assertThatThrownBy(() -> balance.charge(chargeAmount))
-                .isInstanceOf(RestApiException.class);
+                .isInstanceOf(DomainException.class);
     }
 
     @DisplayName("[성공] 잔액 차감 테스트")
@@ -101,7 +101,7 @@ class BalanceEntityTest {
 
         // when, then
         assertThatThrownBy(() -> balance.use(useAmount))
-                .isInstanceOf(RestApiException.class);
+                .isInstanceOf(DomainException.class);
     }
 
     @DisplayName("[실패] 잔액 차감 테스트 - 잔액 부족")
@@ -116,6 +116,6 @@ class BalanceEntityTest {
 
         // when, then
         assertThatThrownBy(() -> balance.use(useAmount))
-                .isInstanceOf(RestApiException.class);
+                .isInstanceOf(DomainException.class);
     }
 }

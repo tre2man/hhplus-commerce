@@ -4,7 +4,7 @@ import kr.hhplus.be.server.domain.balance.command.ChargeBalanceCommand;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.exception.BalanceErrorCode;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
-import kr.hhplus.be.server.exception.RestApiException;
+import kr.hhplus.be.server.exception.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

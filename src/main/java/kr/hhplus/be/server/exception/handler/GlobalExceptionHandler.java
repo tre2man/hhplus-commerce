@@ -1,5 +1,10 @@
-package kr.hhplus.be.server.exception;
+package kr.hhplus.be.server.exception.handler;
 
+import kr.hhplus.be.server.exception.code.CommonErrorCode;
+import kr.hhplus.be.server.exception.code.ErrorCode;
+import kr.hhplus.be.server.exception.exception.DomainException;
+import kr.hhplus.be.server.exception.exception.RestApiException;
+import kr.hhplus.be.server.exception.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -12,7 +17,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -20,6 +24,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
+
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<Object> handleCustomException(DomainException e) {
         ErrorCode errorCode = e.getErrorCode();
         return handleExceptionInternal(errorCode);
     }
@@ -36,13 +46,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException e,
             HttpHeaders headers,
             HttpStatusCode statusCode,
-            WebRequest request) {
+            WebRequest request
+    ) {
         log.warn("handleIllegalArgument", e);
         ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
         return handleExceptionInternal(e, errorCode);
     }
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllException(Exception ex) {
         log.warn("handleAllException", ex);
         ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
@@ -83,7 +94,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .getFieldErrors()
                 .stream()
                 .map(ErrorResponse.ValidationError::of)
-                .collect(Collectors.toList());
+                .toList();
 
         return ErrorResponse.builder()
                 .code(errorCode.name())
