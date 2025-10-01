@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.entity;
 
+import kr.hhplus.be.server.exception.exception.DomainException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -58,6 +59,6 @@ class CouponEntityTest {
         // When, Then
         assertThatThrownBy(() -> {
             coupon.issue(1);
-        }).isInstanceOf(IllegalStateException.class);
+        }).isInstanceOf(DomainException.class);
     }
 }
