@@ -12,14 +12,19 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(BaseException.class)
-    public ResponseEntity<Object> handleCustomException(BaseException e) {
+    @ExceptionHandler(RestApiException.class)
+    public ResponseEntity<Object> handleCustomException(RestApiException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
+
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<Object> handleCustomException(DomainException e) {
         ErrorCode errorCode = e.getErrorCode();
         return handleExceptionInternal(errorCode);
     }
@@ -36,7 +41,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException e,
             HttpHeaders headers,
             HttpStatusCode statusCode,
-            WebRequest request) {
+            WebRequest request
+    ) {
         log.warn("handleIllegalArgument", e);
         ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
         return handleExceptionInternal(e, errorCode);
@@ -83,7 +89,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .getFieldErrors()
                 .stream()
                 .map(ErrorResponse.ValidationError::of)
-                .collect(Collectors.toList());
+                .toList();
 
         return ErrorResponse.builder()
                 .code(errorCode.name())

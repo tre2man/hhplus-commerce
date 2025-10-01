@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.coupon.entity;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.server.domain.coupon.exception.CouponErrorCode;
+import kr.hhplus.be.server.exception.DomainException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -57,17 +59,17 @@ public class IssuedCoupon {
 
     public void use() {
         if (this.usedAt != null) {
-            throw new IllegalStateException("이미 사용된 쿠폰입니다.");
+            throw new DomainException(CouponErrorCode.ALREADY_USED_COUPON);
         }
         if (this.expireAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("만료된 쿠폰입니다.");
+            throw new DomainException(CouponErrorCode.EXPIRED_COUPON);
         }
         this.usedAt = LocalDateTime.now();
     }
 
     public void useCompensation() {
         if (this.usedAt == null) {
-            throw new IllegalStateException("사용되지 않은 쿠폰입니다.");
+            throw new DomainException(CouponErrorCode.NOT_USED_COUPON);
         }
         this.usedAt = null;
     }
