@@ -6,13 +6,10 @@ import kr.hhplus.be.server.domain.order.command.OrderProductCommand;
 import kr.hhplus.be.server.utils.StringUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
-import java.util.UUID;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class CouponUsedEvent implements BaseEvent {
     private String id;

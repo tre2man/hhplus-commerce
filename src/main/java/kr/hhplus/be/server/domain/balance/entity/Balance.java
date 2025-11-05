@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.balance.exception.BalanceErrorCode;
 import kr.hhplus.be.server.exception.exception.DomainException;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 @Entity(name = "balance")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
-@Setter
 public class Balance {
     public static final int MAX_AMOUNT = 1_000_000_000;
     public static final int MAX_CHARGE_AMOUNT = 5_000_000;

@@ -5,12 +5,10 @@ import kr.hhplus.be.server.domain.order.command.*;
 import kr.hhplus.be.server.utils.StringUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class OrderCreatedEvent implements BaseEvent {
     private String id;
