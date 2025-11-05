@@ -56,12 +56,8 @@ public class CouponService {
         }
 
         // 발행 가능한 쿠폰이 있는지 확인
-        Optional<Integer> issuableCount = couponIssueCountRepository.decrementIssuableCount(couponId, 1);
-        if (issuableCount.isEmpty()) {
-            throw new RestApiException(CouponErrorCode.NOT_FOUND_COUPON);
-        }
-        if (issuableCount.get() < 0) {
-            couponIssueCountRepository.setIssuableCount(couponId, 0);
+        Integer issuableCount = couponIssueCountRepository.decrementIssuableCount(couponId, 1);
+        if (issuableCount < 0) {
             throw new RestApiException(CouponErrorCode.EXHAUSTED_COUPON);
         }
 
