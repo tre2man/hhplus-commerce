@@ -15,6 +15,8 @@ public enum CouponErrorCode implements ErrorCode {
     NOT_FOUND_COUPON(HttpStatus.NOT_FOUND, "쿠폰을 찾을 수 없습니다."),
     NOT_USED_COUPON(HttpStatus.CONFLICT, "사용되지 않은 쿠폰입니다."),
     EXPIRED_COUPON(HttpStatus.CONFLICT, "만료된 쿠폰입니다."),
+
+    NOT_FOUND_UPDATED_ISSUABLE_COUNT(HttpStatus.INTERNAL_SERVER_ERROR, "갱신된 발행 가능 수량을 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
